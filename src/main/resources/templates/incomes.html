@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Incomes - SmartSpend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">SmartSpend</a>
+            <div class="d-flex">
+                <a href="/expenses" class="btn btn-outline-light me-2">Expenses</a>
+                <a href="/accounts" class="btn btn-outline-light me-2">Accounts</a>
+                <a href="/dashboard" class="btn btn-outline-light me-2">Dashboard</a>
+                <a href="/history" class="btn btn-outline-light me-2">History</a>
+                <a href="/login" class="btn btn-outline-light me-2">Login</a>
+                <a href="/register" class="btn btn-outline-light me-2">Register</a>
+                <a href="/budgets" class="btn btn-outline-light me-2">Budgets</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Log Income</h2>
+        
+        <div th:if="${param.success}" class="alert alert-success">Income logged and balance updated!</div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Add New Income</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/incomes/add}" method="post">
+                            <div class="mb-3">
+                                <label>Amount (₹)</label>
+                                <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Deposit To Account</label>
+                                <select name="accountId" class="form-select" required>
+                                    <option value="" disabled selected>Select an account...</option>
+                                    <option th:each="acc : ${accounts}" th:value="${acc.accountId}" th:text="${acc.accountName + ' (Balance: ₹' + acc.balance + ')'}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label>Source/Description</label>
+                                <input type="text" name="source" class="form-control" placeholder="e.g. Monthly Salary" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Add Funds</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Source</th>
+                                    <th>Deposited To</th>
+                                    <th class="text-success">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="inc : ${incomes}">
+                                    <td th:text="${inc.incomeDate}"></td>
+                                    <td th:text="${inc.source}"></td>
+                                    <td th:text="${inc.account.accountName}"></td>
+                                    <td class="text-success fw-bold" th:text="${'+₹' + inc.amount}"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(incomes)}">
+                                    <td colspan="4" class="text-center text-muted">No income recorded yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
