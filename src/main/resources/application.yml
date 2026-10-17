@@ -1,3 +1,7 @@
+
+server:
+  port: ${PORT:8080}
+
 spring:
   datasource:
     url: ${MYSQL_URL:jdbc:mysql://localhost:3306/smartspend?useSSL=false&serverTimezone=UTC}
@@ -5,8 +9,7 @@ spring:
     password: ${MYSQL_PASSWORD:pranav@26}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    server:
-  port: ${PORT:8080}
+    
 
   jpa:
     hibernate:
