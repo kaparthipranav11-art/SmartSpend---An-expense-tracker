@@ -79,6 +79,11 @@ public String addGoal(@RequestParam String goalName,
         return "redirect:/dashboard";
     }
 
+    @GetMapping("/goals")
+public String showGoalsPage() {
+    return "goals"; 
+}
+
     @GetMapping("/notifications")
 public String showNotifications(Model model, Principal principal) {
     User user = userRepository.findByEmail(principal.getName()).orElseThrow();
