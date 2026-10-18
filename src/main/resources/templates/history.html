@@ -1,63 +1,623 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Transaction History - SmartSpend</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/dashboard">SmartSpend</a>
-            <div class="d-flex">
-                <a href="/expenses" class="btn btn-outline-light me-2">Expenses</a>
-                <a href="/incomes" class="btn btn-outline-light me-2">Incomes</a>
-                <a href="/budgets" class="btn btn-outline-light me-2">Budgets</a>
-                <a href="/dashboard" class="btn btn-outline-light">Dashboard</a>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - SmartSpend</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #f5f6fa;
+            color: #252b3b;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 240px;
+            padding: 25px 17px;
+            background: #171d2b;
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px;
+            margin-bottom: 38px;
+            color: white;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            border-radius: 10px;
+            background: #635bdb;
+        }
+
+        .nav-heading {
+            padding: 0 12px;
+            margin-bottom: 12px;
+            color: #8790a3;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 13px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: #b8c0cf;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .side-link i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .side-link:hover {
+            background: #252d3e;
+            color: white;
+        }
+
+        .side-link.active {
+            background: #635bdb;
+            color: white;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .main-content {
+            min-height: 100vh;
+            margin-left: 240px;
+            padding: 30px 32px;
+        }
+
+        .mobile-menu {
+            display: none;
+            padding: 9px 12px;
+            border: 1px solid #e1e4ec;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 27px;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: #7c8495;
+            font-size: 13px;
+        }
+
+        .header-link {
+            padding: 10px 14px;
+            border: 1px solid #e0e4ec;
+            border-radius: 8px;
+            background: white;
+            color: #3f4758;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .header-link:hover {
+            border-color: #635bdb;
+            color: #635bdb;
+        }
+
+        .summary-card {
+            height: 100%;
+            padding: 19px 20px;
+            border: 1px solid #e8eaf0;
+            border-radius: 11px;
+            background: white;
+        }
+
+        .summary-label {
+            margin-bottom: 12px;
+            color: #7c8495;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .summary-icon {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .income-icon {
+            background: #e9f7ef;
+            color: #21864d;
+        }
+
+        .expense-icon {
+            background: #fff0ef;
+            color: #d34c4c;
+        }
+
+        .history-panel {
+            margin-top: 25px;
+            overflow: hidden;
+            border: 1px solid #e8eaf0;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(30, 40, 65, 0.025);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 20px 21px;
+            border-bottom: 1px solid #eceef3;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .panel-header p {
+            margin: 6px 0 0;
+            color: #858c9c;
+            font-size: 12px;
+        }
+
+        .transaction-count {
+            padding: 7px 10px;
+            border-radius: 6px;
+            background: #f0efff;
+            color: #5d55c7;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .table-responsive {
+            width: 100%;
+        }
+
+        .history-table {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .history-table thead th {
+            padding: 14px;
+            border-bottom: 1px solid #e8eaf0;
+            background: #f8f9fc;
+            color: #6f7789;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .history-table tbody td {
+            padding: 15px 14px;
+            border-bottom: 1px solid #eff1f5;
+            color: #424a5b;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .history-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tbody tr:hover {
+            background: #fafaff;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .income-badge {
+            background: #e9f7ef;
+            color: #21864d;
+        }
+
+        .expense-badge {
+            background: #fff0ef;
+            color: #d34c4c;
+        }
+
+        .category-name {
+            color: #333b4c;
+            font-weight: 600;
+        }
+
+        .income-amount {
+            color: #21864d !important;
+            font-weight: 700;
+        }
+
+        .expense-amount {
+            color: #d34c4c !important;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            padding: 40px 15px !important;
+            color: #858c9c !important;
+            text-align: center;
+            white-space: normal;
+        }
+
+        .empty-state i {
+            display: block;
+            margin-bottom: 12px;
+            color: #a0a6b5;
+            font-size: 26px;
+        }
+
+        .footer {
+            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 1px solid #e5e8ef;
+            color: #8a91a0;
+            font-size: 11px;
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 215px;
+            }
+
+            .main-content {
+                margin-left: 215px;
+                padding: 25px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 10px 0 25px rgba(0, 0, 0, 0.15);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px 14px;
+            }
+
+            .mobile-menu {
+                display: inline-block;
+            }
+
+            .page-header {
+                align-items: flex-start;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .header-link {
+                display: none;
+            }
+
+            .summary-value {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+
+    <a href="/dashboard" class="brand">
+        <span class="brand-icon">
+            <i class="fa-solid fa-wallet"></i>
+        </span>
+        SmartSpend
+    </a>
+
+    <div class="nav-heading">Main Menu</div>
+
+    <nav>
+        <a href="/dashboard" class="side-link">
+            <i class="fa-solid fa-chart-pie"></i>
+            Dashboard
+        </a>
+
+        <a href="/accounts" class="side-link">
+            <i class="fa-solid fa-building-columns"></i>
+            Accounts
+        </a>
+
+        <a href="/expenses" class="side-link">
+            <i class="fa-solid fa-arrow-trend-down"></i>
+            Expenses
+        </a>
+
+        <a href="/incomes" class="side-link">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            Incomes
+        </a>
+
+        <a href="/budgets" class="side-link">
+            <i class="fa-solid fa-bullseye"></i>
+            Budgets
+        </a>
+
+        <a href="/history" class="side-link active">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            Transaction History
+        </a>
     </nav>
 
-    <div class="container mt-4">
-        <h2 class="mb-4">Complete Transaction Activity Feed</h2>
-        
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Category / Source</th>
-                            <th>Description</th>
-                            <th>Account</th>
-                            <th class="text-end">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="tx : ${transactions}">
-                            <td th:text="${tx.date}"></td>
-                            <td>
-                                <span class="badge" 
-                                      th:classappend="${tx.type == 'INCOME' ? 'bg-success' : 'bg-danger'}" 
-                                      th:text="${tx.type}">
-                                </span>
-                            </td>
-                            <td class="fw-bold" th:text="${tx.category}"></td>
-                            <td th:text="${tx.description}"></td>
-                            <td th:text="${tx.accountName}"></td>
-                            <td class="text-end fw-bold" 
-                                th:classappend="${tx.type == 'INCOME' ? 'text-success' : 'text-danger'}"
-                                th:text="${(tx.type == 'INCOME' ? '+₹' : '-₹') + tx.amount}">
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(transactions)}">
-                            <td colspan="6" class="text-center text-muted py-4">No transaction history found yet. Start logging expenses or incomes!</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="sidebar-bottom">
+        <div class="nav-heading">Account</div>
+
+        <a href="/login" class="side-link">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </a>
+
+        <a href="/register" class="side-link">
+            <i class="fa-solid fa-user-plus"></i>
+            Register
+        </a>
+    </div>
+
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+    <header class="page-header">
+        <div class="d-flex align-items-start gap-3">
+            <button type="button" class="mobile-menu" id="menuToggle"
+                    aria-label="Open navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div>
+                <h1>Transaction History</h1>
+                <p>A record of the income and expenses you've added to SmartSpend.</p>
             </div>
         </div>
+
+        <a href="/dashboard" class="header-link">
+            <i class="fa-solid fa-arrow-left me-2"></i>Dashboard
+        </a>
+    </header>
+
+    <!-- Summary Cards -->
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <div class="summary-card">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="summary-label">Money In</div>
+                        <p class="summary-value" style="color: #21864d;">
+                            <i class="fa-solid fa-arrow-down me-1"
+                               style="font-size: 15px;"></i>
+                            Income Transactions
+                        </p>
+                    </div>
+
+                    <div class="summary-icon income-icon">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                </div>
+                <div class="mt-2" style="color: #858c9c; font-size: 11px;">
+                    Income entries are marked in green below.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="summary-card">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="summary-label">Money Out</div>
+                        <p class="summary-value" style="color: #d34c4c;">
+                            <i class="fa-solid fa-arrow-up me-1"
+                               style="font-size: 15px;"></i>
+                            Expense Transactions
+                        </p>
+                    </div>
+
+                    <div class="summary-icon expense-icon">
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    </div>
+                </div>
+                <div class="mt-2" style="color: #858c9c; font-size: 11px;">
+                    Expense entries are marked in red below.
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <!-- Transaction Table -->
+    <section class="history-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>
+                    <i class="fa-solid fa-list me-2"
+                       style="color: #635bdb;"></i>
+                    All Transactions
+                </h2>
+                <p>Check the date, category, account and amount for each entry.</p>
+            </div>
+
+            <span class="transaction-count"
+                  th:text="${#lists.size(transactions)} + ' records'">
+                0 records
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Category / Source</th>
+                        <th>Description</th>
+                        <th>Account</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="tx : ${transactions}">
+
+                        <td th:text="${tx.date}"></td>
+
+                        <td>
+                            <span class="type-badge"
+                                  th:classappend="${tx.type == 'INCOME' ? ' income-badge' : ' expense-badge'}"
+                                  th:text="${tx.type}">
+                                INCOME
+                            </span>
+                        </td>
+
+                        <td class="category-name" th:text="${tx.category}"></td>
+
+                        <td th:text="${tx.description}"></td>
+
+                        <td th:text="${tx.accountName}"></td>
+
+                        <td class="text-end"
+                            th:classappend="${tx.type == 'INCOME' ? ' income-amount' : ' expense-amount'}"
+                            th:text="${(tx.type == 'INCOME' ? '+₹' : '-₹') + #numbers.formatDecimal(tx.amount, 1, 2)}">
+                            +₹0.00
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(transactions)}">
+                        <td colspan="6" class="empty-state">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+
+                            <div class="fw-semibold mb-1">
+                                No transaction history yet
+                            </div>
+
+                            <div class="mb-3">
+                                Once you add income or expenses, they will show up here.
+                            </div>
+
+                            <a href="/expenses" class="btn btn-sm btn-outline-secondary me-2">
+                                Add Expense
+                            </a>
+
+                            <a href="/incomes" class="btn btn-sm btn-outline-success">
+                                Add Income
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <footer class="footer d-flex flex-wrap justify-content-between gap-2">
+        <span>© 2026 SmartSpend</span>
+        <span>Keeping your financial activity organized.</span>
+    </footer>
+
+</main>
+
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', function () {
+        sidebar.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function (event) {
+        if (
+            window.innerWidth <= 768 &&
+            !sidebar.contains(event.target) &&
+            !menuToggle.contains(event.target)
+        ) {
+            sidebar.classList.remove('show');
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+        }
+    });
+</script>
+
 </body>
 </html>

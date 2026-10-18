@@ -5,219 +5,1162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartSpend Dashboard</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <title>SmartSpend | Financial Dashboard</title>
 
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        .simulated-warning {
-            background-color: #ffeeba;
-            color: #856404;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
+        :root {
+            --navy: #101828;
+            --navy-light: #1d2939;
+            --primary: #635bff;
+            --primary-light: #eeedff;
+            --green: #12b76a;
+            --green-light: #e8fff3;
+            --red: #f04438;
+            --orange: #f79009;
+            --bg: #f5f7fb;
+            --text: #101828;
+            --muted: #667085;
+            --border: #eaecf0;
+            --card-radius: 18px;
         }
 
-        .card-stat {
-            border-left: 4px solid #0d6efd;
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Demo warning */
+
+        .demo-banner {
+            padding: 9px 16px;
+            background: #fff7e6;
+            color: #9a6700;
+            border-bottom: 1px solid #ffe2a8;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: 250px;
+            height: calc(100vh - 37px);
+            position: fixed;
+            top: 37px;
+            left: 0;
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+            padding: 27px 17px 20px;
+            color: #d0d5dd;
+            background: var(--navy);
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px;
+            margin-bottom: 38px;
+            color: #fff;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .brand-icon {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            color: white;
+            background: linear-gradient(135deg, #8178ff, #5145e5);
+            box-shadow: 0 5px 15px #635bff45;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin: 0 0 12px;
+            color: #98a2b3;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            color: #b7c0ce;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background .2s, color .2s;
+        }
+
+        .sidebar .nav-link i {
+            width: 19px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: #635bff;
+        }
+
+        .sidebar .nav-link.active {
+            box-shadow: 0 4px 12px #635bff30;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 24px;
+        }
+
+        .reset-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            padding: 11px 8px;
+            border: 1px solid #7f3037;
+            border-radius: 10px;
+            background: #3b2029;
+            color: #ffb4b4;
+            font-size: 11px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .reset-btn:hover {
+            background: #59252d;
+            color: #fff;
+        }
+
+        .sidebar-note {
+            margin-top: 17px;
+            padding: 12px;
+            border: 1px solid #344054;
+            border-radius: 12px;
+            background: #1d2939;
+            color: #98a2b3;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .sidebar-note i {
+            color: #12b76a;
+            margin-right: 5px;
+        }
+
+        /* Main area */
+
+        .main-content {
+            min-height: calc(100vh - 37px);
+            margin-left: 250px;
+            padding: 0 34px 35px;
+        }
+
+        .topbar {
+            min-height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-btn {
+            position: relative;
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            color: #475467;
+            font-size: 16px;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            display: grid;
+            place-items: center;
+            padding: 0 4px;
+            border: 2px solid var(--bg);
+            border-radius: 20px;
+            background: var(--red);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .user-avatar {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .user-name {
+            max-width: 180px;
+            overflow: hidden;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-role {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .logout-btn {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: #475467;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            border-color: #fecdca;
+            background: #fef3f2;
+            color: var(--red);
+        }
+
+        /* Welcome banner */
+
+        .welcome-banner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-height: 165px;
+            padding: 30px 34px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border-radius: 20px;
+            background: linear-gradient(115deg, #5145e5, #766bff 65%, #a39aff);
+            color: #fff;
+        }
+
+        .welcome-banner::after {
+            content: "";
+            position: absolute;
+            right: -35px;
+            top: -115px;
+            width: 280px;
+            height: 280px;
+            border: 45px solid #ffffff12;
+            border-radius: 50%;
+        }
+
+        .welcome-banner::before {
+            content: "";
+            position: absolute;
+            right: 100px;
+            bottom: -140px;
+            width: 220px;
+            height: 220px;
+            border: 35px solid #ffffff12;
+            border-radius: 50%;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-eyebrow {
+            margin-bottom: 10px;
+            color: #e2dfff;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .welcome-banner h2 {
+            margin-bottom: 9px;
+            font-size: clamp(21px, 2.5vw, 29px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .welcome-banner p {
+            max-width: 480px;
+            margin: 0;
+            color: #eeecff;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .welcome-icon {
+            position: relative;
+            z-index: 1;
+            width: 94px;
+            height: 94px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border: 1px solid #ffffff50;
+            border-radius: 25px;
+            background: #ffffff20;
+            font-size: 43px;
+            transform: rotate(5deg);
+        }
+
+        /* Summary cards */
+
+        .stat-card {
+            position: relative;
+            height: 100%;
+            padding: 22px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            background: #fff;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px #1018280c;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            font-size: 17px;
+        }
+
+        .icon-purple {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .icon-green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .icon-red {
+            background: #fff0ef;
+            color: var(--red);
+        }
+
+        .icon-orange {
+            background: #fff4e5;
+            color: var(--orange);
+        }
+
+        .stat-value {
+            margin-bottom: 9px;
+            overflow-wrap: anywhere;
+            font-size: clamp(21px, 2vw, 29px);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-description {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .stat-description i {
+            margin-right: 5px;
+        }
+
+        .text-green {
+            color: var(--green);
+        }
+
+        .text-red {
+            color: var(--red);
+        }
+
+        /* General panels */
+
+        .dashboard-panel {
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            background: #fff;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 22px 24px;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -.3px;
+        }
+
+        .panel-subtitle {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .panel-badge {
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: 20px;
+        }
+
+        /* Insights */
+
+        .insight-list {
+            padding: 8px 20px 18px;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 17px 4px;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .insight-item:last-child {
+            border-bottom: 0;
+        }
+
+        .insight-icon {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .insight-text {
+            padding-top: 2px;
+            color: #344054;
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .empty-state {
+            padding: 35px 15px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .empty-state i {
+            display: block;
+            margin-bottom: 12px;
+            color: #98a2b3;
+            font-size: 25px;
+        }
+
+        /* Footer */
+
+        .dashboard-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 24px 0 0;
+            color: #98a2b3;
+            font-size: 10px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1199px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding-right: 22px;
+                padding-left: 22px;
+            }
+
+            .stat-card {
+                padding: 17px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 250px;
+                top: 37px;
+                height: calc(100vh - 37px);
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                box-shadow: 10px 0 30px #10182818;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-right: 22px;
+                padding-left: 22px;
+            }
+
+            .mobile-menu-btn {
+                width: 39px;
+                height: 39px;
+                margin-right: 12px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                background: #fff;
+                color: var(--text);
+            }
+
+            .topbar {
+                justify-content: flex-start;
+            }
+
+            .topbar-main {
+                display: flex;
+                align-items: center;
+                flex: 1;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .main-content {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+
+            .topbar {
+                min-height: 75px;
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .page-subtitle {
+                font-size: 10px;
+            }
+
+            .user-name,
+            .user-role {
+                display: none;
+            }
+
+            .user-area {
+                gap: 8px;
+            }
+
+            .logout-btn {
+                padding: 9px;
+                font-size: 11px;
+            }
+
+            .welcome-banner {
+                min-height: 145px;
+                padding: 23px 20px;
+                border-radius: 15px;
+            }
+
+            .welcome-banner h2 {
+                font-size: 22px;
+            }
+
+            .welcome-banner p {
+                font-size: 11px;
+            }
+
+            .welcome-icon {
+                width: 55px;
+                height: 55px;
+                border-radius: 15px;
+                font-size: 25px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-top {
+                align-items: flex-start;
+                margin-bottom: 17px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .stat-description {
+                font-size: 10px;
+            }
+
+            .panel-header {
+                padding: 18px;
+            }
+
+            .chart-container {
+                height: 280px;
+                padding: 12px;
+            }
+
+            .dashboard-footer {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-    <!-- Simulation Warning -->
-    <div class="simulated-warning">
-        ⚠️ SmartBank Simulation: Demo Banking Environment — No Real Bank Connection
+    <!-- Demo Environment Notice -->
+    <div class="demo-banner">
+        <i class="fa-solid fa-shield-halved me-2"></i>
+        SmartBank Simulation &mdash; Demo Environment, No Real Bank Connection
     </div>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
 
-            <a class="navbar-brand" th:href="@{/dashboard}">
-                SmartSpend
+        <a class="brand" th:href="@{/dashboard}">
+            <span class="brand-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </span>
+            SmartSpend
+        </a>
+
+        <p class="nav-label">Workspace</p>
+
+        <nav class="nav flex-column">
+
+            <a class="nav-link active" th:href="@{/dashboard}">
+                <i class="fa-solid fa-chart-pie"></i>
+                Dashboard
             </a>
 
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="nav-link" th:href="@{/accounts}">
+                <i class="fa-solid fa-building-columns"></i>
+                Accounts
+            </a>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <a class="nav-link" th:href="@{/expenses}">
+                <i class="fa-solid fa-arrow-trend-down"></i>
+                Expenses
+            </a>
 
-                <!-- Navigation Links -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/accounts}">Accounts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/expenses}">Expenses</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/incomes}">Incomes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/budgets}">Budgets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/history}">History</a>
-                    </li>
-                </ul>
+            <a class="nav-link" th:href="@{/incomes}">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                Incomes
+            </a>
 
-                <!-- User Information and Logout -->
-                <div class="d-flex align-items-center flex-wrap gap-2">
+            <a class="nav-link" th:href="@{/budgets}">
+                <i class="fa-solid fa-bullseye"></i>
+                Budgets
+            </a>
 
-                    <span
-                        class="navbar-text text-white me-2"
-                        th:text="${'Welcome, ' + fullName}">
-                        Welcome, User
+            <a class="nav-link" th:href="@{/history}">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Transaction History
+            </a>
+
+            <a class="nav-link" th:href="@{/alerts}">
+                <i class="fa-regular fa-bell"></i>
+                Notifications
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <p class="nav-label">Account</p>
+
+            <form th:action="@{/user/reset-data}"
+                  method="post"
+                  onsubmit="return confirm('Are you sure you want to delete ALL expenses and income? This action cannot be undone!');">
+
+                <button type="submit" class="reset-btn">
+                    <i class="fa-solid fa-trash-can"></i>
+                    Reset Financial Data
+                </button>
+            </form>
+
+            <div class="sidebar-note">
+                <i class="fa-solid fa-circle-check"></i>
+                Your financial workspace
+                <br>
+                is ready to use.
+                <br>
+                <span class="text-white">Demo mode enabled</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Top Header -->
+        <header class="topbar">
+
+            <div class="topbar-main">
+
+                <button class="mobile-menu-btn"
+                        type="button"
+                        id="mobileMenuBtn"
+                        aria-label="Toggle navigation"
+                        aria-controls="sidebar"
+                        aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">
+                        Your financial overview at a glance.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="user-area">
+
+                <a th:href="@{/alerts}"
+                   class="notification-btn"
+                   aria-label="View notifications">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                    <span class="notification-count"
+                          th:text="${unreadCount}">
+                        0
                     </span>
+                </a>
 
-                    <a
-                        th:href="@{/alerts}"
-                        class="btn btn-outline-light btn-sm position-relative me-2">
-                        Alerts
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                            th:text="${unreadCount}">
-                            0
+                <div class="user-avatar">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+
+                <div>
+                    <div class="user-name"
+                         th:text="${fullName}">
+                        User Name
+                    </div>
+
+                    <div class="user-role">Personal Account</div>
+                </div>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+
+                    <button type="submit" class="logout-btn">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>
+                        Logout
+                    </button>
+
+                </form>
+
+            </div>
+
+        </header>
+
+        <!-- Welcome Banner -->
+        <section class="welcome-banner">
+
+            <div class="welcome-content">
+
+                <div class="welcome-eyebrow">
+                    <i class="fa-solid fa-sparkles me-1"></i>
+                    Your money, managed smarter
+                </div>
+
+                <h2>
+                    Welcome back,
+                    <span th:text="${fullName}">User</span>!
+                </h2>
+
+                <p>
+                    Track your spending, understand your habits, and make
+                    confident financial decisions with SmartSpend.
+                </p>
+
+            </div>
+
+            <div class="welcome-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+        </section>
+
+        <!-- Financial Summary -->
+        <section class="row g-3 mb-4">
+
+            <!-- Total Income -->
+            <div class="col-6 col-xl-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Total Income</span>
+
+                        <span class="stat-icon icon-green">
+                            <i class="fa-solid fa-arrow-down-long"></i>
                         </span>
-                    </a>
-
-                    <form th:action="@{/logout}" method="post" class="m-0">
-                        <button class="btn btn-danger btn-sm" type="submit">
-                            Logout
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Dashboard Content -->
-    <main class="container mt-4">
-
-        <!-- Financial Summary Cards -->
-        <div class="row mb-4">
-
-            <div class="col-md-3">
-                <div class="card card-stat mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h6 class="text-muted">Total Income</h6>
-                        <h3 th:text="${'₹' + totalIncome}">₹0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div
-                    class="card card-stat mb-3 shadow-sm"
-                    style="border-left-color: #dc3545;">
-                    <div class="card-body">
-                        <h6 class="text-muted">Total Expenses</h6>
-                        <h3 th:text="${'₹' + totalExpenses}">₹0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div
-                    class="card card-stat mb-3 shadow-sm"
-                    style="border-left-color: #198754;">
-                    <div class="card-body">
-                        <h6 class="text-muted">Simulated Balance</h6>
-                        <h3 th:text="${'₹' + availableBalance}">₹0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div
-                    class="card card-stat mb-3 shadow-sm"
-                    style="border-left-color: #ffc107;">
-                    <div class="card-body">
-                        <h6 class="text-muted">Active Goals</h6>
-                        <h3 th:text="${activeGoalsCount}">0</h3>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Charts and Financial Insights -->
-        <div class="row">
-
-            <!-- Expense Category Chart -->
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Expense by Category</h5>
                     </div>
 
-                    <div class="card-body" style="position: relative; height: 300px;">
+                    <h2 class="stat-value"
+                        th:text="${'₹' + totalIncome}">
+                        ₹0
+                    </h2>
+
+                    <div class="stat-description">
+                        <i class="fa-solid fa-circle-check text-green"></i>
+                        Total recorded income
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Total Expenses -->
+            <div class="col-6 col-xl-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Total Expenses</span>
+
+                        <span class="stat-icon icon-red">
+                            <i class="fa-solid fa-arrow-up-long"></i>
+                        </span>
+                    </div>
+
+                    <h2 class="stat-value"
+                        th:text="${'₹' + totalExpenses}">
+                        ₹0
+                    </h2>
+
+                    <div class="stat-description">
+                        <i class="fa-solid fa-receipt text-red"></i>
+                        Total recorded spending
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Available Balance -->
+            <div class="col-6 col-xl-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Simulated Balance</span>
+
+                        <span class="stat-icon icon-purple">
+                            <i class="fa-solid fa-wallet"></i>
+                        </span>
+                    </div>
+
+                    <h2 class="stat-value"
+                        th:text="${'₹' + availableBalance}">
+                        ₹0
+                    </h2>
+
+                    <div class="stat-description">
+                        <i class="fa-solid fa-calculator"
+                           style="color: #635bff;"></i>
+                        Based on recorded finances
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Active Goals -->
+            <div class="col-6 col-xl-3">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">Active Goals</span>
+
+                        <span class="stat-icon icon-orange">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </span>
+                    </div>
+
+                    <h2 class="stat-value"
+                        th:text="${activeGoalsCount}">
+                        0
+                    </h2>
+
+                    <div class="stat-description">
+                        <i class="fa-solid fa-flag"
+                           style="color: #f79009;"></i>
+                        Financial goals in progress
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Analytics -->
+        <section class="row g-4">
+
+            <!-- Expense Breakdown -->
+            <div class="col-12 col-xl-6">
+
+                <div class="dashboard-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3 class="panel-title">
+                                Expense Breakdown
+                            </h3>
+
+                            <p class="panel-subtitle">
+                                Understand where your money goes.
+                            </p>
+                        </div>
+
+                        <span class="panel-badge">
+                            <i class="fa-solid fa-chart-pie me-1"></i>
+                            By Category
+                        </span>
+
+                    </div>
+
+                    <div class="chart-container">
+
                         <canvas id="categoryChart"></canvas>
+
+                        <div id="emptyChart"
+                             class="empty-state d-none">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            No expense data available yet.
+                        </div>
+
                     </div>
 
                 </div>
+
             </div>
 
             <!-- Financial Insights -->
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
+            <div class="col-12 col-xl-6">
 
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Financial Insights Engine</h5>
-                    </div>
+                <div class="dashboard-panel">
 
-                    <div class="card-body">
+                    <div class="panel-header">
 
-                        <ul class="list-group list-group-flush">
+                        <div>
+                            <h3 class="panel-title">
+                                Financial Insights
+                            </h3>
 
-                            <li
-                                class="list-group-item d-flex align-items-center"
-                                th:each="insight : ${insights}">
+                            <p class="panel-subtitle">
+                                Helpful information about your finances.
+                            </p>
+                        </div>
 
-                                <span class="text-primary me-2 fw-bold">•</span>
-
-                                <span th:text="${insight}">
-                                    Insight text
-                                </span>
-
-                            </li>
-
-                            <li
-                                class="list-group-item text-muted"
-                                th:if="${#lists.isEmpty(insights)}">
-                                No financial insights available yet.
-                            </li>
-
-                        </ul>
+                        <span class="panel-badge">
+                            <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
+                            Smart Insights
+                        </span>
 
                     </div>
+
+                    <div class="insight-list">
+
+                        <div th:each="insight, iter : ${insights}"
+                             class="insight-item">
+
+                            <div class="insight-icon">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+
+                            <div class="insight-text"
+                                 th:text="${insight}">
+                                Your financial insight will appear here.
+                            </div>
+
+                        </div>
+
+                        <div class="empty-state"
+                             th:if="${#lists.isEmpty(insights)}">
+
+                            <i class="fa-regular fa-lightbulb"></i>
+
+                            <p class="mb-1 fw-semibold">
+                                Your insights will appear here
+                            </p>
+
+                            <p class="mb-0">
+                                Add income and expenses to get started.
+                            </p>
+
+                        </div>
+
+                    </div>
+
                 </div>
+
             </div>
 
-        </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+
+            <span>
+                &copy; 2026 SmartSpend. Manage your money smarter.
+            </span>
+
+            <span>
+                <i class="fa-solid fa-shield-halved me-1"></i>
+                Demo environment &bull; No real bank connection
+            </span>
+
+        </footer>
+
     </main>
 
-    <!-- Expense Chart Script -->
+    <!-- Chart.js Configuration -->
     <script th:inline="javascript">
         /*<![CDATA[*/
-
-        const chartElement = document.getElementById('categoryChart');
 
         const categoryLabels =
             /*[[${chartLabels}]]*/ ['Food', 'Transport'];
@@ -225,44 +1168,119 @@
         const categoryData =
             /*[[${chartData}]]*/ [5000, 2000];
 
-        new Chart(chartElement, {
-            type: 'doughnut',
+        const chartCanvas = document.getElementById('categoryChart');
+        const emptyChart = document.getElementById('emptyChart');
 
-            data: {
-                labels: categoryLabels,
-                datasets: [{
-                    label: 'Expenses',
-                    data: categoryData,
-                    backgroundColor: [
-                        '#0d6efd',
-                        '#198754',
-                        '#dc3545',
-                        '#ffc107',
-                        '#6f42c1',
-                        '#fd7e14'
-                    ],
-                    borderWidth: 2
-                }]
-            },
+        const hasExpenseData =
+            Array.isArray(categoryData) &&
+            categoryData.some(value => Number(value) > 0);
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+        if (hasExpenseData) {
 
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+            new Chart(chartCanvas, {
+                type: 'doughnut',
+
+                data: {
+                    labels: categoryLabels,
+
+                    datasets: [{
+                        label: 'Expenses (₹)',
+                        data: categoryData,
+
+                        backgroundColor: [
+                            '#635bff',
+                            '#12b76a',
+                            '#f79009',
+                            '#f04438',
+                            '#06aed4',
+                            '#9e77ed',
+                            '#f670c7',
+                            '#667085'
+                        ],
+
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 18,
+                                color: '#475467',
+                                font: {
+                                    family: 'Inter',
+                                    size: 11
+                                }
+                            }
+                        },
+
+                        tooltip: {
+                            backgroundColor: '#101828',
+                            padding: 12,
+                            cornerRadius: 10,
+
+                            callbacks: {
+                                label: function(context) {
+                                    const value = Number(context.raw) || 0;
+
+                                    return ' ' + context.label + ': ₹' +
+                                        value.toLocaleString('en-IN');
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
+
+        } else {
+            chartCanvas.classList.add('d-none');
+            emptyChart.classList.remove('d-none');
+        }
 
         /*]]>*/
     </script>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    <!-- Mobile Sidebar -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('mobileMenuBtn');
+
+        menuButton.addEventListener('click', function () {
+            const isOpen = sidebar.classList.toggle('show');
+
+            menuButton.setAttribute('aria-expanded', String(isOpen));
+
+            menuButton.innerHTML = isOpen
+                ? '<i class="fa-solid fa-xmark"></i>'
+                : '<i class="fa-solid fa-bars"></i>';
+        });
+
+        document.addEventListener('click', function (event) {
+            if (
+                window.innerWidth < 992 &&
+                !sidebar.contains(event.target) &&
+                !menuButton.contains(event.target) &&
+                sidebar.classList.contains('show')
+            ) {
+                sidebar.classList.remove('show');
+                menuButton.setAttribute('aria-expanded', 'false');
+                menuButton.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

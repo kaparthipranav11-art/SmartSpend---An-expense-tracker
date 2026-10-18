@@ -5,9 +5,15 @@ import com.smartspend.smartspend.repository.BankAccountRepository;
 import com.smartspend.smartspend.repository.ExpenseRepository;
 import com.smartspend.smartspend.repository.IncomeRepository;
 import com.smartspend.smartspend.repository.UserRepository;
+import com.smartspend.smartspend.service.TransactionService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.smartspend.smartspend.entity.User;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -17,6 +23,9 @@ import java.util.ArrayList;
 
 @Controller
 public class DashboardController {
+
+    @Autowired
+private TransactionService transactionService;
 
     private final UserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
@@ -32,6 +41,17 @@ public class DashboardController {
         this.bankAccountRepository = bankAccountRepository;
         this.expenseRepository = expenseRepository;
         this.incomeRepository = incomeRepository;
+    }
+
+ @PostMapping("/user/reset-data")
+    public String resetUserData(Principal principal, RedirectAttributes redirectAttributes) {
+        // Fetch the user using the existing userRepository instead of userService
+        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+
+        transactionService.resetUserData(user);
+
+        redirectAttributes.addFlashAttribute("successMessage", "All financial data has been successfully reset!");
+        return "redirect:/dashboard";
     }
 
     @GetMapping("/dashboard")

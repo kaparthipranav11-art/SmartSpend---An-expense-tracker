@@ -1,89 +1,1238 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Budgets - SmartSpend</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartSpend | Budgets</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #101828;
+            --primary: #635bff;
+            --primary-light: #eeedff;
+            --green: #12b76a;
+            --red: #f04438;
+            --orange: #f79009;
+            --bg: #f5f7fb;
+            --text: #101828;
+            --muted: #667085;
+            --border: #eaecf0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Demo banner */
+
+        .demo-banner {
+            padding: 9px 15px;
+            background: #fff7e6;
+            color: #9a6700;
+            border-bottom: 1px solid #ffe2a8;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            position: fixed;
+            top: 37px;
+            left: 0;
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            height: calc(100vh - 37px);
+            padding: 27px 17px 20px;
+            overflow-y: auto;
+            background: var(--navy);
+            color: #d0d5dd;
+            transition: transform .25s ease;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px;
+            margin-bottom: 38px;
+            color: #fff;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .brand:hover {
+            color: #fff;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 39px;
+            height: 39px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8178ff, #5145e5);
+            box-shadow: 0 5px 15px #635bff45;
+        }
+
+        .nav-label {
+            padding: 0 12px;
+            margin: 0 0 12px;
+            color: #98a2b3;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            color: #b7c0ce;
+            font-size: 13px;
+            font-weight: 500;
+            transition: .2s;
+        }
+
+        .sidebar .nav-link i {
+            width: 19px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 24px;
+        }
+
+        .sidebar-note {
+            padding: 12px;
+            margin-top: 17px;
+            border: 1px solid #344054;
+            border-radius: 12px;
+            background: #1d2939;
+            color: #98a2b3;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .sidebar-note i {
+            color: var(--green);
+            margin-right: 5px;
+        }
+
+        /* Main content */
+
+        .main-content {
+            min-height: calc(100vh - 37px);
+            margin-left: 250px;
+            padding: 0 34px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            min-height: 85px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar-main {
+            display: flex;
+            align-items: center;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: #475467;
+            font-size: 12px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .header-link:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .header-link.primary {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .header-link.primary:hover {
+            background: #5145e5;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 39px;
+            height: 39px;
+            margin-right: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+        }
+
+        /* Page introduction */
+
+        .page-hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 27px 30px;
+            margin-bottom: 25px;
+            border-radius: 18px;
+            background: linear-gradient(115deg, #5145e5, #766bff 70%, #a39aff);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page-hero::after {
+            content: "";
+            position: absolute;
+            top: -85px;
+            right: -30px;
+            width: 220px;
+            height: 220px;
+            border: 35px solid #ffffff15;
+            border-radius: 50%;
+        }
+
+        .hero-content,
+        .hero-icon {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-eyebrow {
+            margin-bottom: 9px;
+            color: #e2dfff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .page-hero h2 {
+            margin: 0 0 9px;
+            font-size: clamp(22px, 2.5vw, 29px);
+            font-weight: 800;
+            letter-spacing: -.8px;
+        }
+
+        .page-hero p {
+            margin: 0;
+            color: #eeecff;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .hero-icon {
+            display: grid;
+            place-items: center;
+            width: 82px;
+            height: 82px;
+            flex-shrink: 0;
+            border: 1px solid #ffffff50;
+            border-radius: 23px;
+            background: #ffffff20;
+            font-size: 35px;
+            transform: rotate(5deg);
+        }
+
+        /* Alerts */
+
+        .success-alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 18px;
+            margin-bottom: 22px;
+            border: 1px solid #abefc6;
+            border-radius: 12px;
+            background: #ecfdf3;
+            color: #067647;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .success-alert i {
+            font-size: 18px;
+        }
+
+        /* Cards */
+
+        .dashboard-card {
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: #fff;
+        }
+
+        .card-heading {
+            padding: 22px 23px;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .heading-icon {
+            display: inline-grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            margin-bottom: 14px;
+            border-radius: 11px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .card-heading h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-heading p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .card-body-custom {
+            padding: 23px;
+        }
+
+        /* Form */
+
+        .form-label {
+            margin-bottom: 8px;
+            color: #344054;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-select,
+        .form-control {
+            min-height: 45px;
+            border: 1px solid #d0d5dd;
+            border-radius: 10px;
+            background-color: #fff;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px #635bff18;
+        }
+
+        .input-group-text {
+            border-color: #d0d5dd;
+            border-radius: 10px 0 0 10px;
+            background: #f9fafb;
+            color: #475467;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .field-hint {
+            margin-top: 7px;
+            color: #98a2b3;
+            font-size: 10px;
+        }
+
+        .save-btn {
+            width: 100%;
+            min-height: 46px;
+            margin-top: 7px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .save-btn:hover {
+            background: #5145e5;
+            box-shadow: 0 5px 15px #635bff30;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .form-note {
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: #f9fafb;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        .form-note i {
+            margin-right: 6px;
+            color: var(--primary);
+        }
+
+        /* Budget table */
+
+        .budget-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 20px 23px;
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .budget-summary h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .budget-summary p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .budget-count {
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .table-responsive {
+            padding: 0 14px 10px;
+        }
+
+        .budget-table {
+            width: 100%;
+            margin: 0;
+            vertical-align: middle;
+        }
+
+        .budget-table thead th {
+            padding: 17px 12px;
+            border-bottom: 1px solid var(--border);
+            background: #fcfcfd;
+            color: #667085;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .budget-table tbody td {
+            padding: 18px 12px;
+            border-bottom: 1px solid #f2f4f7;
+            color: #475467;
+            font-size: 11px;
+        }
+
+        .budget-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .budget-table tbody tr:hover {
+            background: #fafaff;
+        }
+
+        .category-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 125px;
+        }
+
+        .category-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .category-name {
+            color: #101828;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .amount-cell {
+            color: #101828 !important;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .spent-cell {
+            white-space: nowrap;
+        }
+
+        .progress-cell {
+            min-width: 145px;
+            width: 30%;
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 7px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .progress {
+            height: 7px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #eaecf0;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            transition: width .5s ease;
+        }
+
+        .budget-status {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-safe {
+            background: #ecfdf3;
+            color: #027a48;
+        }
+
+        .status-warning {
+            background: #fffaeb;
+            color: #b54708;
+        }
+
+        .status-danger {
+            background: #fef3f2;
+            color: #b42318;
+        }
+
+        /* Empty state */
+
+        .empty-state {
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            display: grid;
+            place-items: center;
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 25px;
+        }
+
+        .empty-state h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .empty-state p {
+            max-width: 300px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+
+        .page-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 25px;
+            color: #98a2b3;
+            font-size: 10px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1199px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding-right: 22px;
+                padding-left: 22px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+                box-shadow: 10px 0 30px #10182818;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-right: 22px;
+                padding-left: 22px;
+            }
+
+            .mobile-menu-btn {
+                display: inline-grid;
+                place-items: center;
+            }
+
+            .topbar {
+                justify-content: flex-start;
+            }
+
+            .topbar-main {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .main-content {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+
+            .topbar {
+                min-height: 75px;
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .page-subtitle {
+                font-size: 10px;
+            }
+
+            .header-link {
+                padding: 9px;
+                font-size: 11px;
+            }
+
+            .header-link .link-label {
+                display: none;
+            }
+
+            .page-hero {
+                padding: 22px 19px;
+            }
+
+            .page-hero h2 {
+                font-size: 22px;
+            }
+
+            .page-hero p {
+                font-size: 11px;
+            }
+
+            .hero-icon {
+                width: 53px;
+                height: 53px;
+                border-radius: 15px;
+                font-size: 23px;
+            }
+
+            .card-heading,
+            .card-body-custom {
+                padding: 19px;
+            }
+
+            .budget-summary {
+                padding: 18px;
+            }
+
+            .page-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/dashboard">SmartSpend</a>
-            <div class="d-flex">
-                <a href="/expenses" class="btn btn-outline-light me-2">Expenses</a>
-                <a href="/accounts" class="btn btn-outline-light me-2">Accounts</a>
-                <a href="/dashboard" class="btn btn-outline-light me-2">Dashboard</a>
-                <a href="/history" class="btn btn-outline-light me-2">History</a>
-                <a href="/login" class="btn btn-outline-light me-2">Login</a>
-                <a href="/register" class="btn btn-outline-light me-2">Register</a>
+<body>
+
+    <!-- Demo Environment Banner -->
+    <div class="demo-banner">
+        <i class="fa-solid fa-shield-halved me-2"></i>
+        SmartBank Simulation &mdash; Demo Environment, No Real Bank Connection
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="brand" th:href="@{/dashboard}">
+            <span class="brand-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </span>
+            SmartSpend
+        </a>
+
+        <p class="nav-label">Workspace</p>
+
+        <nav class="nav flex-column">
+
+            <a class="nav-link" th:href="@{/dashboard}">
+                <i class="fa-solid fa-chart-pie"></i>
+                Dashboard
+            </a>
+
+            <a class="nav-link" th:href="@{/accounts}">
+                <i class="fa-solid fa-building-columns"></i>
+                Accounts
+            </a>
+
+            <a class="nav-link" th:href="@{/expenses}">
+                <i class="fa-solid fa-arrow-trend-down"></i>
+                Expenses
+            </a>
+
+            <a class="nav-link" th:href="@{/incomes}">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                Incomes
+            </a>
+
+            <a class="nav-link active" th:href="@{/budgets}">
+                <i class="fa-solid fa-bullseye"></i>
+                Budgets
+            </a>
+
+            <a class="nav-link" th:href="@{/history}">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Transaction History
+            </a>
+
+            <a class="nav-link" th:href="@{/alerts}">
+                <i class="fa-regular fa-bell"></i>
+                Notifications
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <p class="nav-label">Account</p>
+
+            <a class="nav-link" th:href="@{/login}">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login
+            </a>
+
+            <a class="nav-link" th:href="@{/register}">
+                <i class="fa-solid fa-user-plus"></i>
+                Register
+            </a>
+
+            <div class="sidebar-note">
+                <i class="fa-solid fa-circle-check"></i>
+                Manage your spending.
+                <br>
+                <span class="text-white">Build better habits.</span>
             </div>
+
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        <h2 class="mb-4">Monthly Budget Limits</h2>
-        
-        <div th:if="${param.success}" class="alert alert-success">Budget limit set successfully!</div>
+    </aside>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card shadow-sm border-warning">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">Set Category Budget</h5>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="@{/budgets/add}" method="post">
-                            <div class="mb-3">
-                                <label>Category</label>
-                                <select name="categoryId" class="form-select" required>
-                                    <option th:each="cat : ${categories}" th:if="${cat.categoryType.name() == 'EXPENSE'}" th:value="${cat.categoryId}" th:text="${cat.categoryName}"></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label>Monthly Limit (₹)</label>
-                                <input type="number" step="0.01" min="1" name="monthlyLimit" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-warning w-100 text-dark fw-bold">Save Budget</button>
-                        </form>
-                    </div>
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="topbar">
+
+            <div class="topbar-main">
+
+                <button class="mobile-menu-btn"
+                        type="button"
+                        id="mobileMenuBtn"
+                        aria-label="Toggle navigation"
+                        aria-controls="sidebar"
+                        aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h1 class="page-title">Budgets</h1>
+                    <p class="page-subtitle">
+                        Plan your spending. Stay in control.
+                    </p>
                 </div>
+
             </div>
 
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <table class="table table-hover">
+            <div class="header-actions">
+
+                <a th:href="@{/expenses}" class="header-link">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span class="link-label">Expenses</span>
+                </a>
+
+                <a th:href="@{/dashboard}" class="header-link primary">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="link-label">Dashboard</span>
+                </a>
+
+            </div>
+
+        </header>
+
+        <!-- Page Hero -->
+        <section class="page-hero">
+
+            <div class="hero-content">
+
+                <div class="hero-eyebrow">
+                    <i class="fa-solid fa-sparkles me-1"></i>
+                    Smarter money management
+                </div>
+
+                <h2>Take control of your budget.</h2>
+
+                <p>
+                    Set monthly spending limits, track category expenses,
+                    and stay on top of your financial goals.
+                </p>
+
+            </div>
+
+            <div class="hero-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+
+        </section>
+
+        <!-- Success Message -->
+        <div th:if="${param.success}"
+             class="success-alert"
+             role="status">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span>Budget limit set successfully!</span>
+
+        </div>
+
+        <!-- Budget Form and Budget Table -->
+        <section class="row g-4">
+
+            <!-- Create Budget -->
+            <div class="col-12 col-xl-4">
+
+                <div class="dashboard-card">
+
+                    <div class="card-heading">
+
+                        <span class="heading-icon">
+                            <i class="fa-solid fa-sliders"></i>
+                        </span>
+
+                        <h3>Set Category Budget</h3>
+
+                        <p>
+                            Choose an expense category and define how much
+                            you want to spend each month.
+                        </p>
+
+                    </div>
+
+                    <div class="card-body-custom">
+
+                        <form th:action="@{/budgets/add}" method="post">
+
+                            <div class="mb-4">
+
+                                <label for="categoryId" class="form-label">
+                                    Expense Category
+                                </label>
+
+                                <select id="categoryId"
+                                        name="categoryId"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="" selected disabled>
+                                        Select a category
+                                    </option>
+
+                                    <option
+                                        th:each="cat : ${categories}"
+                                        th:if="${cat.categoryType.name() == 'EXPENSE'}"
+                                        th:value="${cat.categoryId}"
+                                        th:text="${cat.categoryName}">
+                                    </option>
+
+                                </select>
+
+                                <div class="field-hint">
+                                    <i class="fa-solid fa-circle-info me-1"></i>
+                                    Only expense categories are shown.
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label for="monthlyLimit" class="form-label">
+                                    Monthly Spending Limit
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">₹</span>
+
+                                    <input
+                                        type="number"
+                                        id="monthlyLimit"
+                                        name="monthlyLimit"
+                                        class="form-control"
+                                        placeholder="e.g. 5000"
+                                        step="0.01"
+                                        min="1"
+                                        max="999999999999"
+                                        required>
+
+                                </div>
+
+                                <div class="field-hint">
+                                    Set a realistic limit for this category.
+                                </div>
+
+                            </div>
+
+                            <button type="submit" class="save-btn">
+                                <i class="fa-solid fa-plus me-2"></i>
+                                Save Budget Limit
+                            </button>
+
+                        </form>
+
+                        <div class="form-note">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <strong>Smart tip:</strong>
+                            Choose limits that match your monthly income
+                            and savings goals.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Budget Overview -->
+            <div class="col-12 col-xl-8">
+
+                <div class="dashboard-card">
+
+                    <div class="budget-summary">
+
+                        <div>
+                            <h3>Your Monthly Budgets</h3>
+                            <p>Monitor spending against your category limits.</p>
+                        </div>
+
+                        <span class="budget-count">
+                            <i class="fa-solid fa-list-check me-1"></i>
+                            <span th:text="${#lists.size(budgets)}">0</span>
+                            Budgets
+                        </span>
+
+                    </div>
+
+                    <!-- Budget Table -->
+                    <div class="table-responsive"
+                         th:if="${not #lists.isEmpty(budgets)}">
+
+                        <table class="table budget-table">
+
                             <thead>
                                 <tr>
-                                    <th>Category</th><th>Monthly Limit</th><th>Spent</th><th>Progress</th>
+                                    <th>Category</th>
+                                    <th>Monthly Limit</th>
+                                    <th>Spent</th>
+                                    <th>Progress</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
+
                             <tbody>
+
                                 <tr th:each="b : ${budgets}">
-                                    <td class="fw-bold" th:text="${b.category.categoryName}"></td>
-                                    <td th:text="${'₹' + b.monthlyLimit}"></td>
-                                    <td th:text="${'₹' + spentMap[b.budgetId]}"></td>
-                                    <td style="width: 30%;">
-                                        <!-- Dynamic Bootstrap Progress Bar -->
-                                        <div class="progress" style="height: 20px;">
-                                            <div class="progress-bar" 
-                                                 role="progressbar" 
-                                                 th:style="'width: ' + ${percentageMap[b.budgetId]} + '%;'"
-                                                 th:classappend="${percentageMap[b.budgetId] > 100 ? 'bg-danger' : (percentageMap[b.budgetId] > 80 ? 'bg-warning text-dark' : 'bg-success')}"
-                                                 th:text="${percentageMap[b.budgetId] + '%'}">
-                                            </div>
+
+                                    <!-- Category -->
+                                    <td>
+                                        <div class="category-cell">
+
+                                            <span class="category-icon">
+                                                <i class="fa-solid fa-tag"></i>
+                                            </span>
+
+                                            <span class="category-name"
+                                                  th:text="${b.category.categoryName}">
+                                                Category
+                                            </span>
+
                                         </div>
                                     </td>
+
+                                    <!-- Monthly Limit -->
+                                    <td class="amount-cell"
+                                        th:text="${'₹' + #numbers.formatDecimal(b.monthlyLimit, 1, 2)}">
+                                        ₹0.00
+                                    </td>
+
+                                    <!-- Spent -->
+                                    <td class="spent-cell"
+                                        th:text="${'₹' + #numbers.formatDecimal(spentMap[b.budgetId] != null ? spentMap[b.budgetId] : 0, 1, 2)}">
+                                        ₹0.00
+                                    </td>
+
+                                    <!-- Progress -->
+                                    <td class="progress-cell">
+
+                                        <div class="progress-info">
+
+                                            <span
+                                                th:text="${#numbers.formatDecimal(percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0, 1, 1) + '%'}">
+                                                0%
+                                            </span>
+
+                                        </div>
+
+                                        <div class="progress"
+                                             role="progressbar"
+                                             th:attr="aria-valuenow=${percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0},
+                                                      aria-valuemin=0,
+                                                      aria-valuemax=100,
+                                                      aria-label=${'Budget progress for ' + b.category.categoryName}">
+
+                                            <div
+                                                class="progress-bar"
+                                                th:style="'width: ' + ${T(java.lang.Math).min(100, T(java.lang.Math).max(0, percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0))} + '%;'"
+                                                th:classappend="${(percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) > 100 ? ' bg-danger' : ((percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) > 80 ? ' bg-warning' : ' bg-success')}">
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        <span
+                                            class="budget-status status-safe"
+                                            th:if="${(percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) <= 80}">
+                                            <i class="fa-solid fa-check me-1"></i>
+                                            On Track
+                                        </span>
+
+                                        <span
+                                            class="budget-status status-warning"
+                                            th:if="${(percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) > 80 and (percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) <= 100}">
+                                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                                            Near Limit
+                                        </span>
+
+                                        <span
+                                            class="budget-status status-danger"
+                                            th:if="${(percentageMap[b.budgetId] != null ? percentageMap[b.budgetId] : 0) > 100}">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                            Over Budget
+                                        </span>
+
+                                    </td>
+
                                 </tr>
-                                <tr th:if="${#lists.isEmpty(budgets)}">
-                                    <td colspan="4" class="text-center text-muted">No budgets configured yet.</td>
-                                </tr>
+
                             </tbody>
+
                         </table>
+
                     </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state"
+                         th:if="${#lists.isEmpty(budgets)}">
+
+                        <div class="empty-icon">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+
+                        <h4>No budgets created yet</h4>
+
+                        <p>
+                            Start managing your spending by creating your
+                            first category budget using the form.
+                        </p>
+
+                    </div>
+
                 </div>
+
             </div>
-        </div>
-    </div>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="page-footer">
+
+            <span>
+                &copy; 2026 SmartSpend. Manage your money smarter.
+            </span>
+
+            <span>
+                <i class="fa-solid fa-shield-halved me-1"></i>
+                Demo environment &bull; No real bank connection
+            </span>
+
+        </footer>
+
+    </main>
+
+    <!-- Mobile Sidebar -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('mobileMenuBtn');
+
+        menuButton.addEventListener('click', function () {
+            const isOpen = sidebar.classList.toggle('show');
+
+            menuButton.setAttribute('aria-expanded', String(isOpen));
+
+            menuButton.innerHTML = isOpen
+                ? '<i class="fa-solid fa-xmark"></i>'
+                : '<i class="fa-solid fa-bars"></i>';
+        });
+
+        document.addEventListener('click', function (event) {
+            if (
+                window.innerWidth < 992 &&
+                !sidebar.contains(event.target) &&
+                !menuButton.contains(event.target) &&
+                sidebar.classList.contains('show')
+            ) {
+                sidebar.classList.remove('show');
+                menuButton.setAttribute('aria-expanded', 'false');
+                menuButton.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

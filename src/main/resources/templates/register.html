@@ -1,41 +1,436 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Register - SmartSpend</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center" style="height: 100vh;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-5">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="text-center mb-4">Create Account</h3>
-                        
-                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-                        <form th:action="@{/register}" method="post">
-                            <div class="mb-3">
-                                <label>Full Name</label>
-                                <input type="text" name="fullName" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Email address</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Password</label>
-                                <input type="password" name="password" class="form-control" required minlength="6">
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Register</button>
-                        </form>
-                        <div class="text-center mt-3">
-                            <a href="/login">Already have an account? Login here</a>
-                        </div>
-                    </div>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SmartSpend</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #20283a;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* Left welcome panel */
+        .welcome-panel {
+            background: #182235;
+            color: #ffffff;
+            padding: 45px 9%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: #8ce0b2;
+            color: #182235;
+            font-size: 21px;
+        }
+
+        .welcome-content {
+            max-width: 460px;
+            position: relative;
+            z-index: 1;
+            padding: 40px 0;
+        }
+
+        .eyebrow {
+            color: #8ce0b2;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .welcome-content h1 {
+            font-size: clamp(32px, 3.5vw, 47px);
+            line-height: 1.2;
+            letter-spacing: -1.6px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .welcome-content p {
+            color: #b9c2d1;
+            font-size: 15px;
+            line-height: 1.9;
+            max-width: 400px;
+        }
+
+        .feature-list {
+            margin-top: 30px;
+            display: grid;
+            gap: 19px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #e1e7ef;
+            font-size: 14px;
+        }
+
+        .feature i {
+            color: #8ce0b2;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .panel-footer {
+            color: #8995a8;
+            font-size: 12px;
+        }
+
+        .decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid rgba(140, 224, 178, 0.10);
+            border-radius: 50%;
+            right: -130px;
+            bottom: 70px;
+        }
+
+        .decoration::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(140, 224, 178, 0.12);
+            border-radius: 50%;
+            top: 39px;
+            left: 39px;
+        }
+
+        /* Registration form */
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 8%;
+            background: #ffffff;
+        }
+
+        .register-box {
+            width: 100%;
+            max-width: 390px;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .register-box h2 {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 9px;
+            color: #1c2638;
+        }
+
+        .form-intro {
+            font-size: 14px;
+            color: #7c8494;
+            margin-bottom: 27px;
+            line-height: 1.7;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #394256;
+            margin-bottom: 9px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #929aaa;
+            font-size: 14px;
+        }
+
+        .form-control {
+            height: 48px;
+            border: 1px solid #dfe3eb;
+            border-radius: 8px;
+            padding: 12px 14px 12px 41px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #43956c;
+            box-shadow: 0 0 0 3px rgba(67, 149, 108, 0.12);
+        }
+
+        .register-button {
+            height: 49px;
+            border: none;
+            border-radius: 8px;
+            background: #26364e;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .register-button:hover {
+            background: #354b69;
+            color: #ffffff;
+        }
+
+        .login-area {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #7c8494;
+        }
+
+        .login-link {
+            display: inline-block;
+            margin-left: 4px;
+            color: #278253;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-link:hover {
+            color: #185f3a;
+            text-decoration: underline;
+        }
+
+        .alert {
+            font-size: 13px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 850px) {
+            .page-wrapper {
+                grid-template-columns: 0.85fr 1.15fr;
+            }
+
+            .welcome-panel {
+                padding: 35px 8%;
+            }
+
+            .form-panel {
+                padding: 35px 7%;
+            }
+
+            .welcome-content h1 {
+                font-size: 34px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .page-wrapper {
+                display: block;
+            }
+
+            .welcome-panel {
+                display: none;
+            }
+
+            .form-panel {
+                min-height: 100vh;
+                padding: 32px 24px;
+            }
+
+            .mobile-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 35px;
+                font-size: 21px;
+                font-weight: 700;
+                color: #1c2638;
+            }
+
+            .mobile-brand .brand-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 19px;
+            }
+
+            .register-box h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-wrapper">
+
+    <!-- Left welcome panel -->
+    <section class="welcome-panel">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <span>SmartSpend</span>
+        </div>
+
+        <div class="welcome-content">
+            <div class="eyebrow">Start managing your money</div>
+
+            <h1>A clearer picture of your finances starts here.</h1>
+
+            <p>
+                Create your account to organize your spending,
+                keep track of your income, and plan your monthly budget.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Keep daily expenses organized
+                </div>
+                <div class="feature">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Track income and account balances
+                </div>
+                <div class="feature">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Stay on top of your monthly budget
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="panel-footer">
+            © 2026 SmartSpend. Manage money with confidence.
+        </div>
+
+        <div class="decoration"></div>
+    </section>
+
+    <!-- Registration form -->
+    <main class="form-panel">
+        <div class="register-box">
+
+            <div class="mobile-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span>SmartSpend</span>
+            </div>
+
+            <h2>Create your account</h2>
+            <p class="form-intro">
+                Fill in your details below to get started with SmartSpend.
+            </p>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <form th:action="@{/register}" method="post">
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full name</label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-user"></i>
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            class="form-control"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            minlength="6"
+                            required>
+                    </div>
+                    <small class="text-secondary mt-2 d-block" style="font-size: 12px;">
+                        Password must contain at least 6 characters.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn register-button w-100">
+                    Create account
+                    <i class="fa-solid fa-arrow-right ms-2"></i>
+                </button>
+            </form>
+
+            <div class="login-area">
+                Already have an account?
+                <a th:href="@{/login}" href="/login" class="login-link">
+                    Login here
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+</div>
 </body>
 </html>
