@@ -1,19 +1,23 @@
 package com.smartspend.smartspend.controller;
 
+import com.smartspend.smartspend.entity.Goal;
 import com.smartspend.smartspend.entity.User;
 import com.smartspend.smartspend.repository.BankAccountRepository;
 import com.smartspend.smartspend.repository.ExpenseRepository;
+import com.smartspend.smartspend.repository.GoalRepository;
 import com.smartspend.smartspend.repository.IncomeRepository;
+import com.smartspend.smartspend.repository.NotificationRepository;
 import com.smartspend.smartspend.repository.UserRepository;
 import com.smartspend.smartspend.service.TransactionService;
+import com.smartspend.smartspend.entity.Notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.smartspend.smartspend.entity.User;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -24,15 +28,20 @@ import java.util.ArrayList;
 @Controller
 public class DashboardController {
 
+    @Autowired private NotificationRepository notificationRepository;
+
     @Autowired
-private TransactionService transactionService;
+    private GoalRepository goalRepository;
+
+    @Autowired
+    private TransactionService transactionService;
 
     private final UserRepository userRepository;
     private final BankAccountRepository bankAccountRepository;
     private final ExpenseRepository expenseRepository;
-    private final IncomeRepository incomeRepository; // Added IncomeRepository
+    private final IncomeRepository incomeRepository;
 
-    // Updated constructor to include IncomeRepository
+    // Constructor
     public DashboardController(UserRepository userRepository, 
                                BankAccountRepository bankAccountRepository, 
                                ExpenseRepository expenseRepository,
@@ -43,31 +52,72 @@ private TransactionService transactionService;
         this.incomeRepository = incomeRepository;
     }
 
- @PostMapping("/user/reset-data")
+
+    @PostMapping("/goals/add")
+public String addGoal(@RequestParam String goalName, 
+                      @RequestParam BigDecimal targetAmount, 
+                      @RequestParam BigDecimal currentAmount, 
+                      Principal principal) {
+    User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+    
+    Goal newGoal = new Goal();
+    newGoal.setGoalName(goalName);
+    newGoal.setTargetAmount(targetAmount);
+    newGoal.setCurrentAmount(currentAmount);
+    newGoal.setUser(user);
+    
+    goalRepository.save(newGoal);
+    
+    return "redirect:/dashboard";
+}
+
+    @PostMapping("/user/reset-data")
     public String resetUserData(Principal principal, RedirectAttributes redirectAttributes) {
-        // Fetch the user using the existing userRepository instead of userService
         User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-
         transactionService.resetUserData(user);
-
         redirectAttributes.addFlashAttribute("successMessage", "All financial data has been successfully reset!");
         return "redirect:/dashboard";
     }
+
+    @GetMapping("/notifications")
+public String showNotifications(Model model, Principal principal) {
+    User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+    
+    // Fetch all notifications for this user
+    List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
+    
+    // Mark them all as read since the user is now looking at them
+    for (Notification notif : notifications) {
+        if (!notif.isRead()) {
+            notif.setRead(true);
+            notificationRepository.save(notif);
+        }
+    }
+
+    model.addAttribute("notifications", notifications);
+    return "notifications";
+}
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model, Principal principal) {
         User user = userRepository.findByEmail(principal.getName()).orElseThrow();
         Long userId = user.getUserId();
 
+        long unreadCount = notificationRepository.countByUserAndIsReadFalse(user);
+
+        // Calculate totals
         BigDecimal totalBalance = bankAccountRepository.getTotalBalance(userId);
         BigDecimal totalExpenses = expenseRepository.getTotalExpenses(userId);
         BigDecimal totalIncome = incomeRepository.getTotalIncome(userId);
 
+        // Calculate Active Goals (MOVED HERE)
+        long activeGoals = goalRepository.countByUser_UserId(userId);
+
         // Fetch real spending breakdown by category
         List<Object[]> categorySpending = expenseRepository.getExpensesByCategory(userId);
         
-        List<String> labels = new java.util.ArrayList<>();
-        List<BigDecimal> data = new java.util.ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<BigDecimal> data = new ArrayList<>();
 
         for (Object[] row : categorySpending) {
             labels.add((String) row[0]);             // Category Name
@@ -80,12 +130,15 @@ private TransactionService transactionService;
             data.add(BigDecimal.ZERO);
         }
 
+        // Add attributes to the model
         model.addAttribute("fullName", user.getFullName());
         model.addAttribute("totalIncome", totalIncome);
         model.addAttribute("totalExpenses", totalExpenses);
         model.addAttribute("availableBalance", totalBalance);
-        model.addAttribute("activeGoalsCount", 0);
-        model.addAttribute("unreadCount", 0);
+        
+        // Use the calculated activeGoals variable here instead of 0
+        model.addAttribute("activeGoalsCount", activeGoals); 
+        model.addAttribute("unreadCount", unreadCount);
 
         // Pass real data to Chart.js
         model.addAttribute("chartLabels", labels);

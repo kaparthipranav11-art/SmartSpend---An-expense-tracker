@@ -768,6 +768,10 @@
                 Dashboard
             </a>
 
+            <a class = "nav-link" th:href="@{/goals}" href="/goals">
+    <i class="fa-solid fa-bullseye"></i> Goals
+</a>
+
             <a class="nav-link" th:href="@{/accounts}">
                 <i class="fa-solid fa-building-columns"></i>
                 Accounts
@@ -978,31 +982,7 @@
 
             </div>
 
-            <!-- Available Balance -->
-            <div class="col-6 col-xl-3">
-
-                <div class="stat-card">
-
-                    <div class="stat-top">
-                        <span class="stat-label">Simulated Balance</span>
-
-                        <span class="stat-icon icon-purple">
-                            <i class="fa-solid fa-wallet"></i>
-                        </span>
-                    </div>
-
-                    <h2 class="stat-value"
-                        th:text="${'₹' + availableBalance}">
-                        ₹0
-                    </h2>
-
-                    <div class="stat-description">
-                        <i class="fa-solid fa-calculator"
-                           style="color: #635bff;"></i>
-                        Based on recorded finances
-                    </div>
-
-                </div>
+            
 
             </div>
 
