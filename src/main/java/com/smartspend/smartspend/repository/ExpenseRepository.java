@@ -19,6 +19,20 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.userId = :userId")
     java.math.BigDecimal getTotalExpenses(@org.springframework.data.repository.query.Param("userId") Long userId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.userId = :userId AND e.expenseDate >= :startDate AND e.expenseDate <= :endDate")
+    java.math.BigDecimal getTotalExpensesForMonth(
+        @org.springframework.data.repository.query.Param("userId") Long userId, 
+        @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, 
+        @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate
+    );
+
+    @org.springframework.data.jpa.repository.Query("SELECT e.category.categoryName, SUM(e.amount) FROM Expense e WHERE e.user.userId = :userId AND e.expenseDate >= :startDate AND e.expenseDate <= :endDate GROUP BY e.category.categoryName")
+    java.util.List<Object[]> getExpensesByCategoryForMonth(
+        @org.springframework.data.repository.query.Param("userId") Long userId, 
+        @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, 
+        @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate
+    );
     
     List<Expense> findByUser_UserId(Long userId);
 

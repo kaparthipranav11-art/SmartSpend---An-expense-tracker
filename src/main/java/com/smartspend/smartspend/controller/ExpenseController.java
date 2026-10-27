@@ -5,8 +5,10 @@ import com.smartspend.smartspend.repository.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -39,6 +41,26 @@ public class ExpenseController {
         
         return "expenses"; // Points to expenses.html
     }
+
+    @PostMapping("/expenses/delete/{id}")
+public String deleteExpense(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    // 1. Identify the currently logged-in user
+    User loggedInUser = userRepository.findByEmail(principal.getName()).orElseThrow();
+    
+    // 2. Find the target expense in the database
+    Expense expense = expenseRepository.findById(id).orElse(null);
+    
+    // 3. THE SECURITY CHECK: Ensure the expense exists AND belongs to the logged-in user
+    if (expense != null && expense.getUser().getUserId().equals(loggedInUser.getUserId())) {
+        expenseRepository.delete(expense);
+        redirectAttributes.addFlashAttribute("successMessage", "Expense deleted successfully.");
+    } else {
+        // If they try to delete someone else's ID, block it and show an error
+        redirectAttributes.addFlashAttribute("errorMessage", "Error: You do not have permission to delete this record.");
+    }
+    
+    return "redirect:/expenses";
+}
 
     @PostMapping("/expenses/add")
     public String addExpense(@RequestParam Long accountId, 

@@ -15,4 +15,11 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
 
     @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i WHERE i.user.userId = :userId")
     BigDecimal getTotalIncome(@Param("userId") Long userId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i WHERE i.user.userId = :userId AND i.incomeDate >= :startDate AND i.incomeDate <= :endDate")
+    java.math.BigDecimal getTotalIncomeForMonth(
+        @org.springframework.data.repository.query.Param("userId") Long userId, 
+        @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, 
+        @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate
+    );
 }

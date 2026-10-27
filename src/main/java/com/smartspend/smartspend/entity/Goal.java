@@ -1,63 +1,40 @@
+
 package com.smartspend.smartspend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "goals")
+@Data
+@NoArgsConstructor
 public class Goal {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @NotBlank(message = "Goal name cannot be empty")
+    @Column(nullable = false)
     private String goalName;
+
+    @NotNull(message = "Target amount is required")
+    @DecimalMin(value = "0.01", message = "Target amount must be greater than zero")
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal targetAmount;
-    private BigDecimal currentAmount;
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+
+    @NotNull(message = "Current amount is required")
+    @DecimalMin(value = "0.00", message = "Current amount cannot be negative")
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal currentAmount = BigDecimal.ZERO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    // --- GETTERS AND SETTERS ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getGoalName() {
-        return goalName;
-    }
-
-    public void setGoalName(String goalName) {
-        this.goalName = goalName;
-    }
-
-    public BigDecimal getTargetAmount() {
-        return targetAmount;
-    }
-
-    public void setTargetAmount(BigDecimal targetAmount) {
-        this.targetAmount = targetAmount;
-    }
-
-    public BigDecimal getCurrentAmount() {
-        return currentAmount;
-    }
-
-    public void setCurrentAmount(BigDecimal currentAmount) {
-        this.currentAmount = currentAmount;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

@@ -53,11 +53,19 @@ public class DashboardController {
     }
 
 
-    @PostMapping("/goals/add")
+@PostMapping("/goals/add")
 public String addGoal(@RequestParam String goalName, 
                       @RequestParam BigDecimal targetAmount, 
                       @RequestParam BigDecimal currentAmount, 
-                      Principal principal) {
+                      Principal principal, 
+                      RedirectAttributes redirectAttributes) { // Added RedirectAttributes
+                      
+    // THE SECURITY CHECK: Block negative numbers
+    if (targetAmount.compareTo(BigDecimal.ZERO) <= 0 || currentAmount.compareTo(BigDecimal.ZERO) < 0) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Error: Amounts must be positive numbers.");
+        return "redirect:/goals";
+    }
+
     User user = userRepository.findByEmail(principal.getName()).orElseThrow();
     
     Goal newGoal = new Goal();
@@ -68,6 +76,7 @@ public String addGoal(@RequestParam String goalName,
     
     goalRepository.save(newGoal);
     
+    redirectAttributes.addFlashAttribute("successMessage", "Goal created successfully!");
     return "redirect:/dashboard";
 }
 
@@ -79,8 +88,20 @@ public String addGoal(@RequestParam String goalName,
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/goals")
-public String showGoalsPage() {
+  @GetMapping("/goals")
+public String showGoalsPage(Model model, Principal principal) {
+    User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+    
+    // Safely fetch all goals and filter for the current user
+    List<Goal> allGoals = goalRepository.findAll();
+    List<Goal> userGoals = new ArrayList<>();
+    for (Goal goal : allGoals) {
+        if (goal.getUser().getUserId().equals(user.getUserId())) {
+            userGoals.add(goal);
+        }
+    }
+    
+    model.addAttribute("goals", userGoals);
     return "goals"; 
 }
 
@@ -110,16 +131,20 @@ public String showNotifications(Model model, Principal principal) {
 
         long unreadCount = notificationRepository.countByUserAndIsReadFalse(user);
 
-        // Calculate totals
-        BigDecimal totalBalance = bankAccountRepository.getTotalBalance(userId);
-        BigDecimal totalExpenses = expenseRepository.getTotalExpenses(userId);
-        BigDecimal totalIncome = incomeRepository.getTotalIncome(userId);
+        // Calculate the first and last day of the current month
+        java.time.LocalDate startDate = java.time.LocalDate.now().withDayOfMonth(1);
+        java.time.LocalDate endDate = java.time.LocalDate.now().withDayOfMonth(java.time.LocalDate.now().lengthOfMonth());
 
-        // Calculate Active Goals (MOVED HERE)
+        // Fetch scoped totals
+        BigDecimal totalBalance = bankAccountRepository.getTotalBalance(userId); // Keep all-time
+        BigDecimal totalExpenses = expenseRepository.getTotalExpensesForMonth(userId, startDate, endDate);
+        BigDecimal totalIncome = incomeRepository.getTotalIncomeForMonth(userId, startDate, endDate);
+        
+        // Calculate Active Goals
         long activeGoals = goalRepository.countByUser_UserId(userId);
 
-        // Fetch real spending breakdown by category
-        List<Object[]> categorySpending = expenseRepository.getExpensesByCategory(userId);
+        // Fetch scoped spending breakdown by category
+        List<Object[]> categorySpending = expenseRepository.getExpensesByCategoryForMonth(userId, startDate, endDate);
         
         List<String> labels = new ArrayList<>();
         List<BigDecimal> data = new ArrayList<>();

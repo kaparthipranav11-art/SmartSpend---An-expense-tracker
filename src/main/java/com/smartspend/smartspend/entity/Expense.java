@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "expenses")
@@ -16,9 +18,16 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseId;
 
+    @Column(nullable = false)
+    @Positive(message = "Expense amount must be greater than zero")
+    private BigDecimal amount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @NotBlank(message = "Description cannot be empty")
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -29,12 +38,8 @@ public class Expense {
     private BankAccount account;
 
     @Column(nullable = false)
-    private BigDecimal amount;
-
-    @Column(nullable = false)
     private LocalDate expenseDate;
 
-    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
