@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -103,6 +104,33 @@ public String showGoalsPage(Model model, Principal principal) {
     
     model.addAttribute("goals", userGoals);
     return "goals"; 
+}
+@PostMapping("/goals/add-funds/{id}")
+public String addFundsToGoal(@PathVariable Long id, 
+                             @RequestParam BigDecimal amountToAdd, 
+                             Principal principal, 
+                             RedirectAttributes redirectAttributes) {
+    User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+    Goal goal = goalRepository.findById(id).orElse(null);
+    
+    // Security check: verify goal exists and belongs to the logged-in user
+    if (goal != null && goal.getUser().getUserId().equals(user.getUserId())) {
+        if (amountToAdd.compareTo(BigDecimal.ZERO) <= 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Amount to add must be greater than zero.");
+            return "redirect:/goals";
+        }
+        
+        // Add the new amount to the current savings
+        BigDecimal newAmount = goal.getCurrentAmount().add(amountToAdd);
+        goal.setCurrentAmount(newAmount);
+        goalRepository.save(goal);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Successfully added ₹" + amountToAdd + " to your goal!");
+    } else {
+        redirectAttributes.addFlashAttribute("errorMessage", "Unauthorized action or goal not found.");
+    }
+    
+    return "redirect:/goals";
 }
 
     @GetMapping("/notifications")
