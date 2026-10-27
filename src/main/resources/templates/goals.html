@@ -1,682 +1,236 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Goals - SmartSpend</title>
-
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box;
+        body { 
+            background-color: #f5f7fb; 
+            font-family: 'Inter', sans-serif; 
+            color: #101828;
         }
-
-        body {
-            background: #f5f7fc;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            color: #252943;
-            min-height: 100vh;
-        }
-
-        .main-container {
-            max-width: 1400px;
-            margin: auto;
-            padding: 35px 22px 50px;
-        }
-
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, #635bff, #8578ff);
-            color: white;
+        .main-content {
             padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 32px;
-            box-shadow: 0 10px 30px rgba(99, 91, 255, 0.17);
-        }
-
-        .page-header h2 {
-            font-weight: 750;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .page-header p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 14px;
-        }
-
-        .header-icon {
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.18);
-            border-radius: 16px;
-            font-size: 25px;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-
-        .back-btn {
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.55);
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-
-        .back-btn:hover {
-            color: #635bff;
-            background: white;
-        }
-
-        /* Headings */
-        .section-heading {
-            font-size: 19px;
-            font-weight: 750;
-            margin-bottom: 8px;
-            color: #252943;
-        }
-
-        .section-heading i {
-            color: #635bff;
-            margin-right: 9px;
-        }
-
-        .section-description {
-            color: #858ba2;
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 22px;
-        }
-
-        /* Cards */
-        .goal-card {
-            background: #ffffff;
-            border: 1px solid #edf0f7;
-            border-radius: 17px;
-            box-shadow: 0 5px 20px rgba(37, 41, 67, 0.035);
-            padding: 24px;
-            height: 100%;
-        }
-
-        .add-goal-card {
-            position: sticky;
-            top: 20px;
-        }
-
-        /* Form */
-        .form-label {
-            font-size: 13px;
-            font-weight: 650;
-            color: #444960;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            border: 1px solid #e5e8f1;
-            background: #fafbfe;
-            padding: 12px 14px;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .form-control:focus {
-            background: #ffffff;
-            border-color: #8179ff;
-            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.10);
-        }
-
-        .input-group-text {
-            border: 1px solid #e5e8f1;
-            background: #f0efff;
-            color: #635bff;
-            font-weight: 700;
-            border-radius: 10px 0 0 10px;
-        }
-
-        .input-group .form-control {
-            border-radius: 0 10px 10px 0;
-        }
-
-        .add-btn {
-            width: 100%;
-            border: none;
-            background: linear-gradient(135deg, #635bff, #8578ff);
-            color: white;
-            padding: 13px;
-            border-radius: 11px;
-            font-size: 14px;
-            font-weight: 700;
-            transition: 0.25s;
-        }
-
-        .add-btn:hover {
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 7px 18px rgba(99, 91, 255, 0.25);
-        }
-
-        .form-note {
-            background: #f4f3ff;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 12px;
-            color: #6d66bc;
-            line-height: 1.6;
-        }
-
-        /* Goal information */
-        .goal-icon {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #eeedff;
-            color: #635bff;
-            border-radius: 12px;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .goal-name {
-            font-size: 15px;
-            font-weight: 750;
-            color: #252943;
-            overflow-wrap: anywhere;
-        }
-
-        .goal-label {
-            color: #9298ab;
-            font-size: 11px;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        .goal-amount {
-            font-size: 16px;
-            font-weight: 750;
-            color: #252943;
-            overflow-wrap: anywhere;
-        }
-
-        .target-amount {
-            font-size: 13px;
-            font-weight: 650;
-            color: #656b80;
-            overflow-wrap: anywhere;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 7px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 750;
-            white-space: nowrap;
-        }
-
-        .status-active {
-            color: #635bff;
-            background: #eeedff;
-        }
-
-        .status-completed {
-            color: #168653;
-            background: #e4f8ed;
-        }
-
-        /* Progress bar */
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 22px;
-            margin-bottom: 9px;
-            gap: 8px;
-        }
-
-        .progress-label {
-            font-size: 12px;
-            color: #858ba2;
-            font-weight: 600;
-        }
-
-        .progress-percentage {
-            font-size: 12px;
-            color: #635bff;
-            font-weight: 750;
-        }
-
-        .progress {
-            height: 9px;
-            border-radius: 20px;
-            background: #eeedff;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #635bff, #948bff);
-            border-radius: 20px;
-            transition: width 0.5s ease;
-        }
-
-        .progress-bar.completed {
-            background: linear-gradient(90deg, #16a36a, #48cf91);
-        }
-
-        /* Card footer */
-        .goal-footer {
-            border-top: 1px solid #f0f1f7;
-            margin-top: 19px;
-            padding-top: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .remaining-label {
-            color: #9298ab;
-            font-size: 11px;
-        }
-
-        .remaining-amount {
-            font-weight: 750;
-            font-size: 12px;
-            color: #252943;
-            text-align: right;
-            overflow-wrap: anywhere;
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 45px 18px;
-            border: 1px dashed #d8dcef;
-            background: #ffffff;
-            border-radius: 16px;
-        }
-
-        .empty-icon {
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #eeedff;
-            color: #635bff;
-            border-radius: 19px;
-            margin: 0 auto 17px;
-            font-size: 27px;
-        }
-
-        .empty-state h5 {
-            font-weight: 750;
-            margin-bottom: 9px;
-        }
-
-        .empty-state p {
-            color: #858ba2;
-            font-size: 13px;
-            max-width: 350px;
+            max-width: 1200px;
             margin: 0 auto;
-            line-height: 1.7;
         }
-
-        .goals-count {
-            background: #eeedff;
+        .card-custom { 
+            border-radius: 16px; 
+            border: 1px solid #eaecf0; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+            background: #fff; 
+        }
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background-color: #eeedff;
             color: #635bff;
-            padding: 6px 11px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 750;
-            white-space: nowrap;
+            font-size: 18px;
         }
-
-        .goal-item {
-            background: #ffffff;
-            border: 1px solid #edf0f7;
-            border-radius: 16px;
-            padding: 21px;
-            box-shadow: 0 5px 20px rgba(37, 41, 67, 0.035);
-            height: 100%;
-            transition: transform 0.25s, box-shadow 0.25s;
+        .btn-primary-custom {
+            background-color: #635bff;
+            border-color: #635bff;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 10px;
         }
-
-        .goal-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(37, 41, 67, 0.08);
+        .btn-primary-custom:hover {
+            background-color: #5145e5;
+            border-color: #5145e5;
         }
-
-        @media (max-width: 767px) {
-            .main-container {
-                padding: 20px 14px 35px;
-            }
-
-            .page-header {
-                padding: 22px 18px;
-                border-radius: 16px;
-            }
-
-            .page-header h2 {
-                font-size: 22px;
-            }
-
-            .header-icon {
-                width: 44px;
-                height: 44px;
-                font-size: 20px;
-                margin-right: 11px;
-            }
-
-            .back-btn {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
-
-            .goal-card {
-                padding: 19px;
-            }
-
-            .add-goal-card {
-                position: static;
-            }
+        .progress { 
+            height: 8px; 
+            border-radius: 10px; 
+            background-color: #f2f4f7; 
         }
-
-        @media (max-width: 420px) {
-            .page-header {
-                align-items: flex-start !important;
-                flex-direction: column;
-                gap: 18px;
-            }
-
-            .back-btn {
-                display: inline-block;
-            }
+        .progress-bar { 
+            background-color: #635bff; 
+            border-radius: 10px; 
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #d0d5dd;
+        }
+        .input-group-text {
+            background-color: #fcfcfd;
+            border-radius: 8px 0 0 8px;
+            color: #667085;
+        }
+        .smart-tip {
+            background-color: #f8f8ff;
+            border-radius: 12px;
+            padding: 15px;
+            color: #475467;
+            font-size: 12px;
+        }
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
     </style>
 </head>
-
 <body>
 
-<div class="main-container">
-
-    <!-- Page Header -->
-    <div class="page-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
-
-        <div class="d-flex align-items-center">
-            <div class="header-icon">
-                <i class="fa-solid fa-bullseye"></i>
-            </div>
-
-            <div>
-                <h2>Savings Goals</h2>
-                <p>Plan your savings, track progress, and achieve your financial goals.</p>
-            </div>
+    <div class="main-content">
+        
+        <!-- Header -->
+        <div class="top-header">
+            <h2 class="fw-bold mb-0"><i class="fa-solid fa-bullseye text-primary me-2"></i> Savings Goals</h2>
+            <a th:href="@{/dashboard}" class="btn btn-outline-secondary rounded-3 fw-semibold">Back to Dashboard</a>
         </div>
 
-        <a th:href="@{/dashboard}" class="back-btn">
-            <i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard
-        </a>
+        <!-- Alerts for Error/Success -->
+        <div th:if="${errorMessage}" class="alert alert-danger shadow-sm rounded-3">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success shadow-sm rounded-3">
+            <i class="fa-solid fa-circle-check me-2"></i> <span th:text="${successMessage}"></span>
+        </div>
 
-    </div>
-
-    <!-- Main Layout -->
-    <div class="row g-4">
-
-        <!-- Add Goal Form -->
-        <div class="col-12 col-lg-4">
-
-            <div class="goal-card add-goal-card">
-
-                <h5 class="section-heading">
-                    <i class="fa-solid fa-circle-plus"></i>Add New Goal
-                </h5>
-
-                <p class="section-description">
-                    Set a savings target and start tracking your progress.
-                </p>
-
-                <form th:action="@{/goals/add}" method="post">
-
-                    <div class="mb-3">
-                        <label for="goalName" class="form-label">Goal Name</label>
-
-                        <input type="text"
-                               class="form-control"
-                               id="goalName"
-                               name="goalName"
-                               placeholder="e.g. Buy a new laptop"
-                               maxlength="100"
-                               required>
+        <div class="row g-4">
+            
+            <!-- Left Column: Add New Goal Form -->
+            <div class="col-lg-4">
+                <div class="card card-custom p-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-circle-plus fs-4 text-primary me-2"></i>
+                        <h4 class="fw-bold mb-0">Add New Goal</h4>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="targetAmount" class="form-label">Target Amount</label>
-
-                        <div class="input-group">
-                            <span class="input-group-text">₹</span>
-
-                            <input type="number"
-                                   class="form-control"
-                                   id="targetAmount"
-                                   name="targetAmount"
-                                   placeholder="50000"
-                                   min="0.01"
-                                   step="0.01"
-                                   required>
+                    <p class="text-muted small mb-4">Set a savings target and start tracking your progress.</p>
+                    
+                    <form th:action="@{/goals/add}" method="post">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-dark">Goal Name</label>
+                            <input type="text" name="goalName" class="form-control" placeholder="e.g. Buy a new laptop" required>
                         </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="currentAmount" class="form-label">Current Savings</label>
-
-                        <div class="input-group">
-                            <span class="input-group-text">₹</span>
-
-                            <input type="number"
-                                   class="form-control"
-                                   id="currentAmount"
-                                   name="currentAmount"
-                                   placeholder="0.00"
-                                   value="0.00"
-                                   min="0"
-                                   step="0.01"
-                                   required>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-dark">Target Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" name="targetAmount" class="form-control" placeholder="50000" required>
+                            </div>
                         </div>
-
-                        <div class="form-text">
-                            Enter the amount you have already saved.
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-dark">Current Savings</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" name="currentAmount" class="form-control" value="0.00" required>
+                            </div>
+                            <small class="text-muted" style="font-size: 11px;">Enter the amount you have already saved.</small>
                         </div>
-                    </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom w-100 mb-4">
+                            <i class="fa-solid fa-plus me-1"></i> Create Savings Goal
+                        </button>
 
-                    <button type="submit" class="add-btn">
-                        <i class="fa-solid fa-plus me-2"></i>Create Savings Goal
-                    </button>
-
-                </form>
-
-                <div class="form-note mt-4">
-                    <i class="fa-solid fa-lightbulb me-2"></i>
-                    <strong>Smart tip:</strong> Set a realistic target and track your savings regularly.
+                        <div class="smart-tip">
+                            <i class="fa-solid fa-lightbulb text-primary me-1"></i>
+                            <strong>Smart tip:</strong> Set a realistic target and track your savings regularly to stay on course.
+                        </div>
+                        
+                    </form>
                 </div>
-
             </div>
 
-        </div>
-
-        <!-- Existing Goals List -->
-        <div class="col-12 col-lg-8">
-
-            <div class="d-flex justify-content-between align-items-start mb-4 gap-2">
-
-                <div>
-                    <h5 class="section-heading mb-2">
-                        <i class="fa-solid fa-chart-line"></i>Your Savings Goals
+            <!-- Right Column: Active Goals List -->
+            <div class="col-lg-8">
+                
+                <div class="mb-4">
+                    <h5 class="fw-bold d-flex align-items-center mb-1">
+                        <i class="fa-solid fa-arrow-trend-up text-primary me-2"></i> Your Savings Goals
                     </h5>
-
-                    <p class="section-description mb-0">
-                        Monitor how close you are to achieving your targets.
-                    </p>
+                    <p class="text-muted small">Monitor how close you are to achieving your targets.</p>
                 </div>
 
-                <span class="goals-count"
-                      th:text="${goals == null ? 0 : goals.size()} + ' Goals'">
-                    0 Goals
-                </span>
-
-            </div>
-
-            <!-- Empty State -->
-            <div th:if="${goals == null or goals.isEmpty()}" class="empty-state">
-
-                <div class="empty-icon">
-                    <i class="fa-solid fa-flag"></i>
+                <!-- Empty State -->
+                <div th:if="${goals == null or goals.isEmpty()}" class="card card-custom text-center p-5">
+                    <i class="fa-solid fa-flag-checkered fs-1 text-muted mb-3"></i>
+                    <h5 class="fw-bold">No goals created yet</h5>
+                    <p class="text-muted mb-0">Use the form on the left to start planning your financial future!</p>
                 </div>
 
-                <h5>No savings goals yet</h5>
-
-                <p>
-                    Create your first goal using the form on the left.
-                    Your savings goals will appear here once added.
-                </p>
-
-            </div>
-
-            <!-- Goal Cards -->
-            <div class="row g-3"
-                 th:if="${goals != null and !goals.isEmpty()}">
-
-                <div class="col-12 col-md-6"
-                     th:each="goal : ${goals}">
-
-                    <div class="goal-item">
-
-                        <!-- Name and Status -->
-                        <div class="d-flex justify-content-between align-items-start gap-2 mb-4">
-
-                            <div class="d-flex align-items-center gap-2">
-
-                                <div class="goal-icon">
-                                    <i class="fa-solid fa-piggy-bank"></i>
+                <!-- Goal Cards Grid -->
+                <div class="row g-3">
+                    <!-- 
+                        THE FIX: th:with safely handles null values and multiplies by 100.0 (a double) 
+                        BEFORE dividing. This completely prevents the BigDecimal ArithmeticException crash! 
+                    -->
+                    <div class="col-md-6" th:each="goal : ${goals}" 
+                         th:with="current=${goal.currentAmount != null ? goal.currentAmount : 0}, 
+                                  target=${goal.targetAmount != null ? goal.targetAmount : 0}, 
+                                  pct=${target > 0 ? (current * 100.0 / target) : 0}, 
+                                  isCompleted=${target > 0 and current >= target}">
+                        
+                        <div class="card card-custom p-4 h-100">
+                            
+                            <!-- Card Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div class="d-flex gap-3">
+                                    <div class="icon-box">
+                                        <i class="fa-solid fa-piggy-bank"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted mb-0" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">SAVINGS GOAL</p>
+                                        <h6 class="fw-bold mb-0 fs-5" th:text="${goal.goalName}">Goal Name</h6>
+                                    </div>
                                 </div>
-
+                                <!-- Badges -->
+                                <span th:if="${!isCompleted}" class="badge rounded-pill" style="background-color: #eeedff; color: #635bff; padding: 6px 12px;">
+                                    <i class="fa-solid fa-spinner fa-spin-pulse me-1" style="font-size: 10px;"></i> Active
+                                </span>
+                                <span th:if="${isCompleted}" class="badge rounded-pill bg-success text-white" style="padding: 6px 12px;">
+                                    <i class="fa-solid fa-check-circle me-1"></i> Completed
+                                </span>
+                            </div>
+                            
+                            <!-- Amounts -->
+                            <div class="d-flex justify-content-between mb-2">
                                 <div>
-                                    <div class="goal-label">SAVINGS GOAL</div>
-
-                                    <h6 class="goal-name mb-0"
-                                        th:text="${goal.goalName}">
-                                        Goal Name
-                                    </h6>
+                                    <p class="text-muted mb-1" style="font-size: 10px; font-weight: 600;">AMOUNT SAVED</p>
+                                    <h5 class="fw-bold mb-0">₹<span th:text="${#numbers.formatDecimal(current, 1, 'COMMA', 2, 'POINT')}">0.00</span></h5>
                                 </div>
-
-                            </div>
-
-                            <span th:if="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0}"
-                                  class="status-badge status-completed">
-                                <i class="fa-solid fa-circle-check"></i>Completed
-                            </span>
-
-                            <span th:if="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) < 0}"
-                                  class="status-badge status-active">
-                                <i class="fa-solid fa-spinner"></i>Active
-                            </span>
-
-                            <span th:if="${goal.currentAmount == null or goal.targetAmount == null}"
-                                  class="status-badge status-active">
-                                Active
-                            </span>
-
-                        </div>
-
-                        <!-- Saved and Target Amounts -->
-                        <div class="row g-2">
-
-                            <div class="col-6">
-                                <div class="goal-label">AMOUNT SAVED</div>
-
-                                <div class="goal-amount">
-                                    ₹<span th:text="${goal.currentAmount != null ? #numbers.formatDecimal(goal.currentAmount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</span>
+                                <div class="text-end">
+                                    <p class="text-muted mb-1" style="font-size: 10px; font-weight: 600;">TARGET AMOUNT</p>
+                                    <h6 class="fw-bold text-muted mb-0">₹<span th:text="${#numbers.formatDecimal(target, 1, 'COMMA', 2, 'POINT')}">0.00</span></h6>
                                 </div>
                             </div>
-
-                            <div class="col-6 text-end">
-                                <div class="goal-label">TARGET AMOUNT</div>
-
-                                <div class="target-amount">
-                                    ₹<span th:text="${goal.targetAmount != null ? #numbers.formatDecimal(goal.targetAmount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</span>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress mt-3">
+                                <div class="progress-bar" role="progressbar" 
+                                     th:classappend="${isCompleted ? 'bg-success' : ''}"
+                                     th:style="'width: ' + (${pct > 100 ? 100 : pct}) + '%'">
                                 </div>
                             </div>
-
+                            
                         </div>
-
-                        <!-- Progress Percentage -->
-                        <div class="progress-info">
-
-                            <span class="progress-label">Savings progress</span>
-
-                            <span class="progress-percentage"
-                                  th:with="percentage=${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)) : T(java.math.BigDecimal).ZERO}"
-                                  th:text="${#numbers.formatDecimal(percentage, 1, 1) + '%'}">
-                                0.0%
-                            </span>
-
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="progress">
-
-                            <div class="progress-bar"
-                                 role="progressbar"
-                                 th:with="percentage=${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)) : T(java.math.BigDecimal).ZERO}"
-                                 th:classappend="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0 ? 'completed' : ''}"
-                                 th:style="'width: ' + ${percentage} + '%'">
-                            </div>
-
-                        </div>
-
-                        <!-- Remaining Amount -->
-                        <div class="goal-footer">
-
-                            <span class="remaining-label"
-                                  th:text="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0 ? 'Goal achieved!' : 'Amount remaining'}">
-                                Amount remaining
-                            </span>
-
-                            <span class="remaining-amount"
-                                  th:with="remaining=${goal.currentAmount != null and goal.targetAmount != null ? goal.targetAmount.subtract(goal.currentAmount).max(T(java.math.BigDecimal).ZERO) : null}"
-                                  th:text="${remaining != null ? '₹' + #numbers.formatDecimal(remaining, 1, 'COMMA', 2, 'POINT') : '—'}">
-                                ₹0.00
-                            </span>
-
-                        </div>
-
                     </div>
-
                 </div>
 
             </div>
-
         </div>
-
     </div>
 
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
