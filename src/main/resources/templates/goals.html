@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,7 +79,7 @@
             background: white;
         }
 
-        /* Section headings */
+        /* Headings */
         .section-heading {
             font-size: 19px;
             font-weight: 750;
@@ -127,7 +128,6 @@
             padding: 12px 14px;
             border-radius: 10px;
             font-size: 14px;
-            transition: 0.2s;
         }
 
         .form-control:focus {
@@ -175,22 +175,7 @@
             line-height: 1.6;
         }
 
-        /* Goal cards */
-        .goal-item {
-            background: #ffffff;
-            border: 1px solid #edf0f7;
-            border-radius: 16px;
-            padding: 21px;
-            box-shadow: 0 5px 20px rgba(37, 41, 67, 0.035);
-            height: 100%;
-            transition: transform 0.25s, box-shadow 0.25s;
-        }
-
-        .goal-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(37, 41, 67, 0.08);
-        }
-
+        /* Goal information */
         .goal-icon {
             width: 42px;
             height: 42px;
@@ -232,7 +217,6 @@
             overflow-wrap: anywhere;
         }
 
-        /* Status badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -254,7 +238,7 @@
             background: #e4f8ed;
         }
 
-        /* Progress */
+        /* Progress bar */
         .progress-info {
             display: flex;
             justify-content: space-between;
@@ -289,11 +273,11 @@
             transition: width 0.5s ease;
         }
 
-        .progress-bar.bg-success {
-            background: linear-gradient(90deg, #16a36a, #48cf91) !important;
+        .progress-bar.completed {
+            background: linear-gradient(90deg, #16a36a, #48cf91);
         }
 
-        /* Goal footer */
+        /* Card footer */
         .goal-footer {
             border-top: 1px solid #f0f1f7;
             margin-top: 19px;
@@ -362,7 +346,21 @@
             white-space: nowrap;
         }
 
-        /* Responsive */
+        .goal-item {
+            background: #ffffff;
+            border: 1px solid #edf0f7;
+            border-radius: 16px;
+            padding: 21px;
+            box-shadow: 0 5px 20px rgba(37, 41, 67, 0.035);
+            height: 100%;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .goal-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(37, 41, 67, 0.08);
+        }
+
         @media (max-width: 767px) {
             .main-container {
                 padding: 20px 14px 35px;
@@ -418,6 +416,7 @@
 
     <!-- Page Header -->
     <div class="page-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
+
         <div class="d-flex align-items-center">
             <div class="header-icon">
                 <i class="fa-solid fa-bullseye"></i>
@@ -432,12 +431,13 @@
         <a th:href="@{/dashboard}" class="back-btn">
             <i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard
         </a>
+
     </div>
 
-    <!-- Main Layout: Add Goal on Left, Goals List on Right -->
+    <!-- Main Layout -->
     <div class="row g-4">
 
-        <!-- Add New Goal Form -->
+        <!-- Add Goal Form -->
         <div class="col-12 col-lg-4">
 
             <div class="goal-card add-goal-card">
@@ -452,7 +452,6 @@
 
                 <form th:action="@{/goals/add}" method="post">
 
-                    <!-- Goal Name -->
                     <div class="mb-3">
                         <label for="goalName" class="form-label">Goal Name</label>
 
@@ -465,7 +464,6 @@
                                required>
                     </div>
 
-                    <!-- Target Amount -->
                     <div class="mb-3">
                         <label for="targetAmount" class="form-label">Target Amount</label>
 
@@ -483,7 +481,6 @@
                         </div>
                     </div>
 
-                    <!-- Current Savings -->
                     <div class="mb-4">
                         <label for="currentAmount" class="form-label">Current Savings</label>
 
@@ -506,7 +503,6 @@
                         </div>
                     </div>
 
-                    <!-- Submit -->
                     <button type="submit" class="add-btn">
                         <i class="fa-solid fa-plus me-2"></i>Create Savings Goal
                     </button>
@@ -515,17 +511,18 @@
 
                 <div class="form-note mt-4">
                     <i class="fa-solid fa-lightbulb me-2"></i>
-                    <strong>Smart tip:</strong> Set a realistic target and track your savings regularly to stay on course.
+                    <strong>Smart tip:</strong> Set a realistic target and track your savings regularly.
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Existing Goals -->
+        <!-- Existing Goals List -->
         <div class="col-12 col-lg-8">
 
             <div class="d-flex justify-content-between align-items-start mb-4 gap-2">
+
                 <div>
                     <h5 class="section-heading mb-2">
                         <i class="fa-solid fa-chart-line"></i>Your Savings Goals
@@ -540,10 +537,12 @@
                       th:text="${goals == null ? 0 : goals.size()} + ' Goals'">
                     0 Goals
                 </span>
+
             </div>
 
             <!-- Empty State -->
             <div th:if="${goals == null or goals.isEmpty()}" class="empty-state">
+
                 <div class="empty-icon">
                     <i class="fa-solid fa-flag"></i>
                 </div>
@@ -554,9 +553,10 @@
                     Create your first goal using the form on the left.
                     Your savings goals will appear here once added.
                 </p>
+
             </div>
 
-            <!-- Goals Grid -->
+            <!-- Goal Cards -->
             <div class="row g-3"
                  th:if="${goals != null and !goals.isEmpty()}">
 
@@ -565,10 +565,11 @@
 
                     <div class="goal-item">
 
-                        <!-- Goal Name and Status -->
+                        <!-- Name and Status -->
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-4">
 
                             <div class="d-flex align-items-center gap-2">
+
                                 <div class="goal-icon">
                                     <i class="fa-solid fa-piggy-bank"></i>
                                 </div>
@@ -581,6 +582,7 @@
                                         Goal Name
                                     </h6>
                                 </div>
+
                             </div>
 
                             <span th:if="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0}"
@@ -588,14 +590,19 @@
                                 <i class="fa-solid fa-circle-check"></i>Completed
                             </span>
 
-                            <span th:unless="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0}"
+                            <span th:if="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) < 0}"
                                   class="status-badge status-active">
                                 <i class="fa-solid fa-spinner"></i>Active
                             </span>
 
+                            <span th:if="${goal.currentAmount == null or goal.targetAmount == null}"
+                                  class="status-badge status-active">
+                                Active
+                            </span>
+
                         </div>
 
-                        <!-- Amounts -->
+                        <!-- Saved and Target Amounts -->
                         <div class="row g-2">
 
                             <div class="col-6">
@@ -618,21 +625,27 @@
 
                         <!-- Progress Percentage -->
                         <div class="progress-info">
+
                             <span class="progress-label">Savings progress</span>
 
                             <span class="progress-percentage"
-                                  th:text="${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? #numbers.formatDecimal(goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)), 1, 1) + '%' : '0.0%'}">
-                                0%
+                                  th:with="percentage=${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)) : T(java.math.BigDecimal).ZERO}"
+                                  th:text="${#numbers.formatDecimal(percentage, 1, 1) + '%'}">
+                                0.0%
                             </span>
+
                         </div>
 
                         <!-- Progress Bar -->
                         <div class="progress">
+
                             <div class="progress-bar"
                                  role="progressbar"
-                                 th:classappend="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0 ? 'bg-success' : ''}"
-                                 th:style="'width: ' + (${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)) : T(java.math.BigDecimal).ZERO}) + '%'">
+                                 th:with="percentage=${goal.targetAmount != null and goal.currentAmount != null and goal.targetAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? goal.currentAmount.multiply(T(java.math.BigDecimal).valueOf(100)).divide(goal.targetAmount, 2, T(java.math.RoundingMode).HALF_UP).min(T(java.math.BigDecimal).valueOf(100)) : T(java.math.BigDecimal).ZERO}"
+                                 th:classappend="${goal.currentAmount != null and goal.targetAmount != null and goal.currentAmount.compareTo(goal.targetAmount) >= 0 ? 'completed' : ''}"
+                                 th:style="'width: ' + ${percentage} + '%'">
                             </div>
+
                         </div>
 
                         <!-- Remaining Amount -->
@@ -644,7 +657,8 @@
                             </span>
 
                             <span class="remaining-amount"
-                                  th:text="${goal.currentAmount != null and goal.targetAmount != null ? (goal.currentAmount.compareTo(goal.targetAmount) >= 0 ? '₹0.00' : '₹' + #numbers.formatDecimal(goal.targetAmount.subtract(goal.currentAmount).max(T(java.math.BigDecimal).ZERO), 1, 'COMMA', 2, 'POINT')) : '—'}">
+                                  th:with="remaining=${goal.currentAmount != null and goal.targetAmount != null ? goal.targetAmount.subtract(goal.currentAmount).max(T(java.math.BigDecimal).ZERO) : null}"
+                                  th:text="${remaining != null ? '₹' + #numbers.formatDecimal(remaining, 1, 'COMMA', 2, 'POINT') : '—'}">
                                 ₹0.00
                             </span>
 
