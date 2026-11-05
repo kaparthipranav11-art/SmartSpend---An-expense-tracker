@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -35,28 +36,38 @@ public class IncomeController {
         return "incomes"; 
     }
 
-    @PostMapping("/incomes/add")
-    public String addIncome(@RequestParam Long accountId, 
-                            @RequestParam BigDecimal amount, 
-                            @RequestParam String source,
-                            Principal principal) {
-        
-        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-        BankAccount account = bankAccountRepository.findById(accountId).orElseThrow();
+   @PostMapping("/incomes/add") // Or /income/add depending on your form action
+public String addIncome(@RequestParam BigDecimal amount,
+                        @RequestParam(required = false) String source,
+                        @RequestParam(required = false) String description,
+                        @RequestParam(required = false) String incomeDate,
+                        Principal principal,
+                        RedirectAttributes redirectAttributes) {
 
-        // 1. Save the income record
-        Income income = new Income();
-        income.setUser(user);
-        income.setAccount(account);
-        income.setAmount(amount);
-        income.setSource(source);
-        income.setIncomeDate(LocalDate.now());
-        incomeRepository.save(income);
-
-        // 2. Add the amount to the bank account balance
-        account.setBalance(account.getBalance().add(amount));
-        bankAccountRepository.save(account);
-
-        return "redirect:/incomes?success";
+    // 1. Validation check for positive amount
+    if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Income amount must be greater than zero.");
+        return "redirect:/incomes"; // Or /dashboard
     }
+
+    User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+
+    Income income = new Income();
+    income.setAmount(amount);
+    income.setSource(source != null && !source.isBlank() ? source : "General Income");
+    income.setDescription(description);
+    income.setUser(user);
+
+    // 2. Safe Date Fallback: Use submitted date or default to today if null
+    if (incomeDate != null && !incomeDate.isBlank()) {
+        income.setIncomeDate(LocalDate.parse(incomeDate));
+    } else {
+        income.setIncomeDate(LocalDate.now());
+    }
+
+    incomeRepository.save(income);
+
+    redirectAttributes.addFlashAttribute("successMessage", "Income added successfully!");
+    return "redirect:/dashboard";
+}
 }
