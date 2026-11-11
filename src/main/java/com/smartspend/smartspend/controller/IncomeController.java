@@ -57,19 +57,20 @@ public class IncomeController {
         return "incomes";
     }
 
-    @PostMapping("/incomes/add")
-    @Transactional
-    public String addIncome(
-            @RequestParam BigDecimal amount,
-            @RequestParam(required = false) String source,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate incomeDate,
-            @RequestParam Long accountId,
-            Principal principal,
-            RedirectAttributes redirectAttributes) {
+@PostMapping("/incomes/add")
+@Transactional
+public String addIncome(
+        @RequestParam BigDecimal amount,
+        @RequestParam(required = false) String source,
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate incomeDate,
+        @RequestParam Long accountId,
+        Principal principal,
+        RedirectAttributes redirectAttributes) {
 
+    try {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -81,20 +82,15 @@ public class IncomeController {
         }
 
         User user = userRepository.findByEmail(principal.getName())
-                .orElse(null);
-
-        if (user == null) {
-            return "redirect:/login";
-        }
+                .orElseThrow();
 
         BankAccount account = bankAccountRepository
-                .findByAccountIdAndUser_UserId(
-                        accountId, user.getUserId())
+                .findByAccountIdAndUser_UserId(accountId, user.getUserId())
                 .orElse(null);
 
         if (account == null) {
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Please select a valid bank account.");
+                    "errorMessage", "Invalid bank account.");
             return "redirect:/incomes";
         }
 
@@ -103,7 +99,11 @@ public class IncomeController {
         income.setSource(
                 source != null && !source.isBlank()
                         ? source : "General Income");
-        income.setDescription(description);
+        income.setDescription(
+    description != null && !description.isBlank()
+        ? description
+        : "General Income"
+);
         income.setIncomeDate(
                 incomeDate != null ? incomeDate : LocalDate.now());
         income.setUser(user);
@@ -111,16 +111,25 @@ public class IncomeController {
 
         incomeRepository.save(income);
 
-        BigDecimal currentBalance = account.getBalance() != null
+        BigDecimal balance = account.getBalance() != null
                 ? account.getBalance() : BigDecimal.ZERO;
 
-        account.setBalance(currentBalance.add(amount));
-
+        account.setBalance(balance.add(amount));
         bankAccountRepository.save(account);
 
         redirectAttributes.addFlashAttribute(
-                "successMessage", "Income added and account balance updated!");
+                "successMessage", "Income added successfully!");
 
-        return "redirect:/incomes?success";
+        return "redirect:/incomes";
+
+    } catch (Exception e) {
+        e.printStackTrace();
+
+        redirectAttributes.addFlashAttribute(
+                "errorMessage", "Failed to add income: " + e.getMessage());
+
+        return "redirect:/incomes";
     }
+}
+
 }

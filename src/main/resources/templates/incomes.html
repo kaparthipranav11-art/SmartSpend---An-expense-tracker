@@ -434,10 +434,13 @@
     </header>
 
     <!-- Success Message -->
-    <div th:if="${param.success}" class="success-notice">
-        <i class="fa-solid fa-circle-check me-2"></i>
-        Income recorded successfully and account balance updated.
-    </div>
+    <div th:if="${successMessage}" class="alert alert-success"
+     th:text="${successMessage}">
+</div>
+
+<div th:if="${errorMessage}" class="alert alert-danger"
+     th:text="${errorMessage}">
+</div>
 
     <div class="row g-4">
 
