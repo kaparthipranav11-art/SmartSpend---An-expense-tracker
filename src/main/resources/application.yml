@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://bwzi18ilsmpcg8n2ie9q-mysql.services.clever-cloud.com:3306/bwzi18ilsmpcg8n2ie9q?useSSL=false&allowPublicKeyRetrieval=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:pranav@26}
+    url: jdbc:mysql://bwzi18ilsmpcg8n2ie9q-mysql.services.clever-cloud.com:3306/bwzi18ilsmpcg8n2ie9q?serverTimezone=UTC
+    username: uxrw0fone7e0ff84
+    password: a7CnPieZjelATTLISQMT
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
