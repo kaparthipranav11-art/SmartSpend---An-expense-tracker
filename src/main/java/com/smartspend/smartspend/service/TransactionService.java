@@ -1,9 +1,12 @@
+
 package com.smartspend.smartspend.service;
 
 import com.smartspend.smartspend.entity.User;
 import com.smartspend.smartspend.repository.ExpenseRepository;
 import com.smartspend.smartspend.repository.GoalRepository;
 import com.smartspend.smartspend.repository.IncomeRepository;
+import com.smartspend.smartspend.repository.BudgetRepository;
+import com.smartspend.smartspend.repository.BankAccountRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,15 +24,24 @@ public class TransactionService {
     @Autowired
     private GoalRepository goalRepository;
 
+    @Autowired
+    private BudgetRepository budgetRepository;
+
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+
     @Transactional
     public void resetUserData(User user) {
-        // Delete all expenses
-        expenseRepository.deleteByUser(user);
 
-        // Delete all incomes
+        // Delete expenses and incomes first
+        expenseRepository.deleteByUser(user);
         incomeRepository.deleteByUser(user);
 
-        // Delete all goals
+        // Delete budgets and goals
+        budgetRepository.deleteByUser(user);
         goalRepository.deleteByUser(user);
+
+        // Delete bank accounts after dependent records
+        bankAccountRepository.deleteByUser(user);
     }
 }

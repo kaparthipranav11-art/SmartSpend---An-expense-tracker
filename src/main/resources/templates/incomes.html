@@ -467,10 +467,20 @@
         <input type="text" name="source" class="form-control" placeholder="Salary, Freelance, etc.">
     </div>
 
+<div th:if="${errorMessage}" class="alert alert-danger"
+     th:text="${errorMessage}"></div>
+
     <div class="mb-3">
-        <label class="form-label">Date</label>
-        <input type="date" name="incomeDate" class="form-control">
-    </div>
+    <label class="form-label">Deposit To</label>
+    <select name="accountId" class="form-select" required>
+        <option value="">Select Bank Account</option>
+
+        <option th:each="account : ${accounts}"
+                th:value="${account.accountId}"
+                th:text="${account.accountName}">
+        </option>
+    </select>
+</div>
 
     <button type="submit" class="btn btn-primary">Add Income</button>
 </form>
@@ -516,9 +526,9 @@
                                     Monthly Salary
                                 </td>
 
-                                <td th:text="${inc.account.accountName}">
-                                    Savings Account
-                                </td>
+                                <td th:text="${inc.account != null ? inc.account.accountName : 'Not assigned'}">
+    Not assigned
+</td>
 
                                 <td class="income-amount text-end"
                                     th:text="${'+₹' + #numbers.formatDecimal(inc.amount, 1, 2)}">
